@@ -136,6 +136,8 @@ Assembler::error::error(int line, int index, string type = "", string message = 
 //}
 
 bool Assembler::lineParser(const string line) {
+
+    // Define parser rules
     auto name = x3::rule<class name>{}
                     = char_("a-zA-Z") >> *char_("a-z_A-Z0-9");
 
@@ -145,15 +147,14 @@ bool Assembler::lineParser(const string line) {
     auto comment = x3::rule<class comment>{}
                     = "//" >> *char_;
 
-
+    //string iterators
     auto iter_start = line.begin();
     auto iter_end = line.end();
 
     instruction inst;
-    vector<string> slt;
+    vector<string> slt; // this is just a test
 
     auto push_back = [&](auto& ctx){ slt.push_back(_attr(ctx)); };
-
 
     bool result = parse(
             iter_start,
@@ -161,7 +162,8 @@ bool Assembler::lineParser(const string line) {
             name[push_back] >> -args_l >> *(char_(" "))
     );
 
-    if (iter_end != iter_start) {
+
+    if (iter_end != iter_start) {   //Complete parser
         errors.push_back(
                 error(cur_line, iter_end - iter_start, "Syntax Error","Unexpected" ,line )
         );
