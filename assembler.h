@@ -1,13 +1,14 @@
-/*
-    assembler.h
-
-    Created by Stavros Avramdis on 7/1/18.
+/*  assembler.h
+ *
+ *
+ *  Created by Stavros Avramdis on 7/1/18.
 */
 
 #ifndef UNTITLED_ASSEMBLER_H
 #define UNTITLED_ASSEMBLER_H
 
 
+#include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 
 #include <algorithm>
@@ -29,21 +30,25 @@ using namespace std;
 namespace x3 = boost::spirit::x3;
 namespace ascii = boost::spirit::x3::ascii;
 
-using x3::double_;
-using x3::phrase_parse;
 using x3::_attr;
-using x3::parse;
-using x3::lit;
-using x3::char_;
-using x3::lexeme;
-using x3::alpha;
 using x3::alnum;
+using x3::alpha;
+using x3::char_;
+using x3::double_;
+using x3::eol;
+using x3::lexeme;
+using x3::lit;
+using x3::parse;
+using x3::phrase_parse;
 using x3::skip;
+
 using ascii::space;
 
+
 class Assembler {
+
 public:
-    Assembler();
+    Assembler(bool mode);
 
     int opCode(string s);
 
@@ -51,13 +56,16 @@ public:
 
     int operator[](string s);
 
-    void foo(const string& s){ parser(s);}
+    void setInputFile(string file);
+
+    bool parseString(const string& s){ return parser(s); }
 
     void translate();
 
     void printErrors();
 
     friend string tobinary(int, int);
+
 
 private:
     struct instruction {
@@ -66,7 +74,9 @@ private:
         int size;
         instruction();
         void add(string s);
+        void add(vector<std::string>& v);
     };
+
 
     struct error {
         int line;
@@ -77,16 +87,20 @@ private:
 
         error(int line, int index, string type, string message, string line_text);
 
-        friend ostream &operator<<(ostream& out ,const error e);
-
+        const string get();
     };
 
 
     int cur_line;
+    string cur_file;
+    bool onDebug;
 
-    map<string, int> opCodes;
-    map<string, int> reg;
-    map<string, int> variables;
+    // All maps provde binary value of each type
+    map<string, int> opCodes;       // List off all opCodes
+    map<string, int> numOfArgs;     // Number of Arguments of each opCode
+    map<string, int> reg;           // Registers
+    map<string, int> variables;     // Variable Stack
+    map<string, int> consts;        // Const Stack
 
     vector<instruction> instructions;
     vector<error> errors;
@@ -100,6 +114,5 @@ private:
 };
 
 }
-
 
 #endif //UNTITLED_ASSEMBLER_H

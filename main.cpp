@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <fstream>
 
 
 
@@ -11,13 +11,18 @@
 
 int main() {
     using namespace asmbl;
-    Assembler a;
+    Assembler a(true);
 
-    string test = "Hello\n my\n         \n name\n is\n Stavros\n";
+    string test = "ADD r1,x2,r4\n"
+                  "j\n"
+                  "ADD r2,r3,r2 \n"
+                  "NOP r1,";
 
-    a.foo(test);
-
+    bool result = a.parseString(test);
 
     cout<<endl;
+    cout<< boolalpha<<result <<endl;
+
+
     return 0;
 }

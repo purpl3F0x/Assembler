@@ -4,9 +4,11 @@
 
 #include "assembler.h"
 
+
 namespace asmbl {
 
-Assembler::Assembler() {
+
+Assembler::Assembler(bool mode = false):onDebug{mode} {
 
     //Basic operationns
     opCodes["NOP"] = 0b0000001;
@@ -69,6 +71,11 @@ Assembler::Assembler() {
     opCodes["HLT"] = 0b1111111;
 
 
+    /////// Number of Arguments of each opCode
+    numOfArgs["NOP"] = 0;
+    numOfArgs["ADD"] = 3;
+
+
     //Registers
     reg["r1"] = 0b000;
     reg["r2"] = 0b001;
@@ -108,6 +115,9 @@ int Assembler::operator[](string s) {
 
 }
 
+void Assembler::setInputFile(std::string file) {
+
+}
 
 string tobinary(int n, int d = 16) {
     string s;
@@ -122,30 +132,37 @@ string tobinary(int n, int d = 16) {
 Assembler::instruction::instruction() : size{-1} {}
 
 void Assembler::instruction::add(std::string s) {
-    if (! ++size) opCode = s;
+    if (!++size) opCode = s;
     else arguments.push_back(s);
+}
+
+void Assembler::instruction::add(vector<std::string> &v) {
+    arguments.reserve(arguments.size() + v.size());       //Memory Preallocation
+    arguments.insert(arguments.end(), v.begin(), v.end());
+    size+= v.size();
 }
 
 Assembler::error::error(int line, int index, string type = "", string message = "", string line_text = "")
         : line{line}, index{index}, type{type}, message{message}, line_text{line_text} {
 }
 
-//ostream &operator<<(ostream &out, const Assembler::error e) {
-//    out << e.type + " error,on line" << e.line << ":" << e.index << "\\" << e.message << endl;
-//    return out;
-//}
+
+
+const string Assembler::error::get() {
+    return type + " on line :" + to_string(line) + ":" + to_string(index) + "\t" + message ;
+}
 
 bool Assembler::lineParser(const string line) {
 
     // Define parser rules
-    auto name = x3::rule<class name>{}
+    auto name = x3::rule<class name, std::string>{}
                     = char_("a-zA-Z") >> *char_("a-z_A-Z0-9");
 
-    auto args_l = x3::rule<class l>{}
+    auto args_l = x3::rule<class l, std::vector<std::string> >{}
                     = " " >> (name % skip(space)[","]);
 
     auto comment = x3::rule<class comment>{}
-                    = "//" >> *char_;
+                    = "//" >> *(char_ - eol);
 
     //string iterators
     auto iter_start = line.begin();
@@ -154,22 +171,68 @@ bool Assembler::lineParser(const string line) {
     instruction inst;
     vector<string> slt; // this is just a test
 
-    auto push_back = [&](auto& ctx){ slt.push_back(_attr(ctx)); };
+    auto add = [&](auto &ctx) { inst.add(_attr(ctx)); };
 
     bool result = parse(
             iter_start,
             iter_end,
-            name[push_back] >> -args_l >> *(char_(" "))
+            name[add] >> -args_l[add] >> *(char_(" ") )
     );
 
+    //Testing
 
-    if (iter_end != iter_start) {   //Complete parser
+    if ( opCodes.find( inst.opCode ) == opCodes.end() ){    // given identifier is not valid opCode
+        result = false;
+
         errors.push_back(
-                error(cur_line, iter_end - iter_start, "Syntax Error","Unexpected" ,line )
+                error(cur_line,
+                      iter_end - iter_start,
+                      "Syntax Error",
+                      inst.opCode + " is not a valid opcode.",    // Example: 42 is no a valid opcode
+                      line
+                )
+        );
+    }else if (inst.size != numOfArgs[inst.opCode]){  // Check if have right number of arguments
+
+        result = false;
+
+        errors.push_back(
+                error(cur_line,
+                      iter_start - line.begin(),
+                      "Logic Error",
+                      inst.opCode +" expects " + to_string(numOfArgs[inst.opCode]) + " argument(s), got "  + to_string(inst.size) + ".",    // Example: ADD expects 3 arguments, got 4
+                      line
+                )
         );
     }
 
-    return (result && iter_end == iter_start);
+    if (iter_end != iter_start) {   // Create an error if parser
+
+        result = false;
+
+        errors.push_back(
+                error(cur_line,
+                      iter_start - line.begin(),
+                      "Syntax Error",
+                      "Unexpected -> " + string(iter_start,iter_end),
+                      line
+                )
+        );
+    }
+
+    // Code used for debugging
+    if (onDebug) {
+        cout << inst.opCode << endl;
+        for (auto i : inst.arguments) cout << "\t->" << i << std::endl;
+
+        for (auto e : errors) {
+            cout << e.get() << endl;
+        }
+    }
+
+    //
+
+    return result;
 }
 
 bool Assembler::parser(const string &s) {
@@ -178,9 +241,21 @@ bool Assembler::parser(const string &s) {
     stringstream stream(s);
     string line;
     while (std::getline(stream, line)) {
-        cout<< cur_line++<<" : " + line<<endl;
+        cur_line ++;
+        lineParser(line);
     }
 
+}
+
+bool Assembler::parser(std::ifstream fs) {
+    string line;
+    bool success = true;
+
+    while (std::getline(fs, line)) {
+        cur_line++;
+        if(line.size() > 0) success += lineParser(line);
+
+    }
 }
 
 } //End of asmbl namesapce
