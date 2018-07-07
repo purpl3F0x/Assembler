@@ -13,10 +13,9 @@ int main() {
     using namespace asmbl;
     Assembler a(true);
 
-    string test = "ADD r1,x2,r4\n"
-                  "j\n"
-                  "ADD r2,r3,r2 \n"
-                  "NOP r1,";
+    string test = "ADD r1,x2,r4 \n"
+                  "ADD r2 , r3,r2\n"
+                  "NOP ";
 
     bool result = a.parseString(test);
 

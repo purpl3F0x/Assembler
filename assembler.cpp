@@ -115,8 +115,8 @@ int Assembler::operator[](string s) {
 
 }
 
-void Assembler::setInputFile(std::string file) {
-
+void Assembler::setInputFile(string infile) {
+    cur_file = infile;
 }
 
 string tobinary(int n, int d = 16) {
@@ -156,13 +156,16 @@ bool Assembler::lineParser(const string line) {
 
     // Define parser rules
     auto name = x3::rule<class name, std::string>{}
-                    = char_("a-zA-Z") >> *char_("a-z_A-Z0-9");
+        = lexeme [char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];;
 
     auto args_l = x3::rule<class l, std::vector<std::string> >{}
-                    = " " >> (name % skip(space)[","]);
+        = " " >> (name % skip(space)[","]);
 
-    auto comment = x3::rule<class comment>{}
-                    = "//" >> *(char_ - eol);
+    auto comment
+            = x3::omit [
+                    "//" >> *(char_-eol)
+                    | "/*" >> *(char_ - "*/") >> "*/"
+            ];
 
     //string iterators
     auto iter_start = line.begin();
@@ -176,12 +179,12 @@ bool Assembler::lineParser(const string line) {
     bool result = parse(
             iter_start,
             iter_end,
-            name[add] >> -args_l[add] >> *(char_(" ") )
+            skip(comment|space) [ name[add] >> *(name[add] % ',') ] >> *(space | comment)
     );
 
     //Testing
 
-    if ( opCodes.find( inst.opCode ) == opCodes.end() ){    // given identifier is not valid opCode
+    if ( result && opCodes.find( inst.opCode ) == opCodes.end() ){    // given identifier is not valid opCode
         result = false;
 
         errors.push_back(
@@ -192,7 +195,7 @@ bool Assembler::lineParser(const string line) {
                       line
                 )
         );
-    }else if (inst.size != numOfArgs[inst.opCode]){  // Check if have right number of arguments
+    }else if (result && inst.size != numOfArgs[inst.opCode]){  // Check if have right number of arguments
 
         result = false;
 
