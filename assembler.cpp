@@ -90,29 +90,16 @@ Assembler::Assembler(bool mode = false):onDebug{mode} {
 
 
 int Assembler::opCode(string s) {
-    map<string, int>::const_iterator it = opCodes.find(s);
+    auto it = opCodes.find(s);
 
     if (it != opCodes.end()) return it->second;
     else throw logic_error("Got \" " + s + "\" expected an opcode");
 }
 
 int Assembler::Register(string s) {
-    map<string, int>::const_iterator it = reg.find(s);
+    auto it = reg.find(s);
     if (it != reg.end()) return it->second;
     else throw logic_error(s + " is not a  register");
-}
-
-int Assembler::operator[](string s) {
-
-    try {
-        return opCode(s);
-    } catch (logic_error) {}
-    try {
-        return Register(s);
-    } catch (logic_error) {
-        throw logic_error(s + " is not an identifier");
-    }
-
 }
 
 void Assembler::setInputFile(string infile) {
@@ -137,7 +124,7 @@ void Assembler::instruction::add(std::string s) {
 }
 
 void Assembler::instruction::add(vector<std::string> &v) {
-    arguments.reserve(arguments.size() + v.size());       //Memory Preallocation
+    arguments.reserve(arguments.size() + v.size());       //Memory Pre allocation
     arguments.insert(arguments.end(), v.begin(), v.end());
     size+= v.size();
 }
@@ -172,7 +159,7 @@ bool Assembler::lineParser(const string line) {
     auto iter_end = line.end();
 
     instruction inst;
-    vector<string> slt; // this is just a test
+
 
     auto add = [&](auto &ctx) { inst.add(_attr(ctx)); };
 
@@ -184,7 +171,7 @@ bool Assembler::lineParser(const string line) {
 
     //Testing
 
-    if ( result && opCodes.find( inst.opCode ) == opCodes.end() ){    // given identifier is not valid opCode
+    if (result && inst.size && opCodes.find(inst.opCode) == opCodes.end()) {    // given identifier is not valid opCode
         result = false;
 
         errors.push_back(
@@ -225,7 +212,7 @@ bool Assembler::lineParser(const string line) {
 
     // Code used for debugging
     if (onDebug) {
-        cout << inst.opCode << endl;
+        cout << cur_line << ": " << inst.opCode << "(" << numOfArgs[inst.opCode] << ")" << endl;
         for (auto i : inst.arguments) cout << "\t->" << i << std::endl;
 
         for (auto e : errors) {
@@ -250,15 +237,21 @@ bool Assembler::parser(const string &s) {
 
 }
 
-bool Assembler::parser(std::ifstream fs) {
+bool Assembler::parser(ifstream &fs) {
+    cur_line = 0;
     string line;
     bool success = true;
 
     while (std::getline(fs, line)) {
+
         cur_line++;
-        if(line.size() > 0) success += lineParser(line);
+        if (!line.size()) continue;   //skip empty lines
+        success =
+                lineParser(line)
+                && success;
 
     }
 }
+
 
 } //End of asmbl namesapce

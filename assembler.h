@@ -54,11 +54,20 @@ public:
 
     int Register(string s);
 
-    int operator[](string s);
-
     void setInputFile(string file);
 
     bool parseString(const string& s){ return parser(s); }
+
+    bool parseFile() {
+        ifstream infile;
+        infile.open(cur_file);
+        if (onDebug) {
+            cout << "Opening " << cur_file << "..." << endl;
+            if (infile) cout << "Ok" << endl;
+            else cout << "Cannot Open" << endl;
+        }
+        return parser(infile);
+    }
 
     void translate();
 
@@ -109,7 +118,9 @@ private:
     bool lineParser(const string line);
 
     bool parser(const string& s);
-    bool parser(ifstream fs);
+
+    bool parser(ifstream &fs);
+
 
 };
 
