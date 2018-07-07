@@ -1,3 +1,3 @@
 # Assembler
 
-<body><a href="exportToHTML/main.cpp.html">main.cpp</a><br /><a href="exportToHTML/CMakeLists.txt.html">CMakeLists.txt</a><br />
+<body><a href="docs/main.cpp.html">main.cpp</a><br /><a href="docs/CMakeLists.txt.html">CMakeLists.txt</a><br />
