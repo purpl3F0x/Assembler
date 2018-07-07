@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>cmake_install.cmake</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); font-weight: bold; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(169,183,198); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cmake_install.cmake</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># Install script for directory: /home/purpl3f0x/CLionProjects/untitled</span><span class="s1"> 
+ 
+</span><span class="s0"># Set the install prefix</span><span class="s1"> 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">NOT DEFINED CMAKE_INSTALL_PREFIX</span><span class="s1">) 
+  </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_PREFIX </span><span class="s1">&quot;</span><span class="s3">/usr/local</span><span class="s1">&quot;) 
+</span><span class="s2">endif</span><span class="s1">() 
+</span><span class="s4">string</span><span class="s1">(</span><span class="s3">REGEX REPLACE </span><span class="s1">&quot;</span><span class="s3">/$</span><span class="s1">&quot; &quot;&quot; </span><span class="s3">CMAKE_INSTALL_PREFIX </span><span class="s1">&quot;</span><span class="s3">${CMAKE_INSTALL_PREFIX}</span><span class="s1">&quot;) 
+ 
+</span><span class="s0"># Set the install configuration name.</span><span class="s1"> 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">NOT DEFINED CMAKE_INSTALL_CONFIG_NAME</span><span class="s1">) 
+  </span><span class="s2">if</span><span class="s1">(</span><span class="s3">BUILD_TYPE</span><span class="s1">) 
+    </span><span class="s4">string</span><span class="s1">(</span><span class="s3">REGEX REPLACE </span><span class="s1">&quot;</span><span class="s3">^[^A-Za-z0-9_]+</span><span class="s1">&quot; &quot;&quot; 
+           </span><span class="s3">CMAKE_INSTALL_CONFIG_NAME </span><span class="s1">&quot;</span><span class="s3">${BUILD_TYPE}</span><span class="s1">&quot;) 
+  </span><span class="s2">else</span><span class="s1">() 
+    </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_CONFIG_NAME </span><span class="s1">&quot;</span><span class="s3">Debug</span><span class="s1">&quot;) 
+  </span><span class="s2">endif</span><span class="s1">() 
+  </span><span class="s4">message</span><span class="s1">(</span><span class="s3">STATUS </span><span class="s1">&quot;</span><span class="s3">Install configuration: \&quot;${CMAKE_INSTALL_CONFIG_NAME}\&quot;</span><span class="s1">&quot;) 
+</span><span class="s2">endif</span><span class="s1">() 
+ 
+</span><span class="s0"># Set the component getting installed.</span><span class="s1"> 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">NOT CMAKE_INSTALL_COMPONENT</span><span class="s1">) 
+  </span><span class="s2">if</span><span class="s1">(</span><span class="s3">COMPONENT</span><span class="s1">) 
+    </span><span class="s4">message</span><span class="s1">(</span><span class="s3">STATUS </span><span class="s1">&quot;</span><span class="s3">Install component: \&quot;${COMPONENT}\&quot;</span><span class="s1">&quot;) 
+    </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_COMPONENT </span><span class="s1">&quot;</span><span class="s3">${COMPONENT}</span><span class="s1">&quot;) 
+  </span><span class="s2">else</span><span class="s1">() 
+    </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_COMPONENT</span><span class="s1">) 
+  </span><span class="s2">endif</span><span class="s1">() 
+</span><span class="s2">endif</span><span class="s1">() 
+ 
+</span><span class="s0"># Install shared libraries without execute permission?</span><span class="s1"> 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">NOT DEFINED CMAKE_INSTALL_SO_NO_EXE</span><span class="s1">) 
+  </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_SO_NO_EXE </span><span class="s1">&quot;</span><span class="s3">1</span><span class="s1">&quot;) 
+</span><span class="s2">endif</span><span class="s1">() 
+ 
+</span><span class="s0"># Is this installation the result of a crosscompile?</span><span class="s1"> 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">NOT DEFINED CMAKE_CROSSCOMPILING</span><span class="s1">) 
+  </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_CROSSCOMPILING </span><span class="s1">&quot;</span><span class="s3">FALSE</span><span class="s1">&quot;) 
+</span><span class="s2">endif</span><span class="s1">() 
+ 
+</span><span class="s2">if</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_COMPONENT</span><span class="s1">) 
+  </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_MANIFEST </span><span class="s1">&quot;</span><span class="s3">install_manifest_${CMAKE_INSTALL_COMPONENT}.txt</span><span class="s1">&quot;) 
+</span><span class="s2">else</span><span class="s1">() 
+  </span><span class="s4">set</span><span class="s1">(</span><span class="s3">CMAKE_INSTALL_MANIFEST </span><span class="s1">&quot;</span><span class="s3">install_manifest.txt</span><span class="s1">&quot;) 
+</span><span class="s2">endif</span><span class="s1">() 
+ 
+</span><span class="s4">string</span><span class="s1">(</span><span class="s3">REPLACE </span><span class="s1">&quot;</span><span class="s3">;</span><span class="s1">&quot; &quot;</span><span class="s3">\n</span><span class="s1">&quot; </span><span class="s3">CMAKE_INSTALL_MANIFEST_CONTENT</span><span class="s1"> 
+       &quot;</span><span class="s3">${CMAKE_INSTALL_MANIFEST_FILES}</span><span class="s1">&quot;) 
+</span><span class="s4">file</span><span class="s1">(</span><span class="s3">WRITE </span><span class="s1">&quot;</span><span class="s3">/home/purpl3f0x/CLionProjects/untitled/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}</span><span class="s1">&quot; 
+     &quot;</span><span class="s3">${CMAKE_INSTALL_MANIFEST_CONTENT}</span><span class="s1">&quot;) 
+</span></pre>
+</body>
+</html>
