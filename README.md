@@ -8,8 +8,7 @@ Feel free to make any suggestions.
 
 
 <body><a href="docs/main.cpp.html">main.cpp</a><br /><a href="docs/CMakeLists.txt.html">CMakeLists.txt</a><br />
+ 
+|Never Settle and Keep Dreaming
   
-  ```cpp
-  cout << "Never Settle and Keep Dreaming";
-  
-  ```
+
