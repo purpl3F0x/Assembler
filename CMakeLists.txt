@@ -17,4 +17,4 @@ if(Boost_FOUND)
 endif()
 
 
-add_executable(untitled main.cpp assembler.cpp assembler.h)
+add_executable(untitled main.cpp assembler.cpp assembler.hpp)

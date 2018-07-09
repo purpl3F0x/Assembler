@@ -1,7 +1,7 @@
 #include <iostream>
 
 
-#include "assembler.h"
+#include "assembler.hpp"
 
 
 
@@ -16,7 +16,6 @@ int main() {
 
 
     cout << boolalpha << result << endl;
-
 
 
     return 0;

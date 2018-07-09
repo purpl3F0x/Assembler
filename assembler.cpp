@@ -2,21 +2,23 @@
 // Created by purpl3f0x on 7/1/18.
 //
 
-#include "assembler.h"
+#include "assembler.hpp"
 
 
 namespace asmbl {
 
 
-Assembler::Assembler(bool mode = false):onDebug{mode} {
+Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
     //Basic operationns
     opCodes["NOP"] = 0b0000001;
     opCodes["LDA"] = 0b0000010;
     opCodes["LDI"] = 0b0000011;
-    opCodes["JMP"] = 0b0000100;
-    opCodes["MI"] = 0b0000101;
-    opCodes["MO"] = 0b0000110;
+    opCodes["STA"] = 0b0000100;
+    opCodes["JMP"] = 0b0000101;
+    opCodes["MI"] = 0b0000110;
+    opCodes["MO"] = 0b0000111;
+
 
     //Conditional Jumps
     opCodes["JC"] = 0b0001000;
@@ -56,6 +58,7 @@ Assembler::Assembler(bool mode = false):onDebug{mode} {
     opCodes["SHL"] = 0b1100111;
     opCodes["SHR"] = 0b1101000;
     opCodes["ROT"] = 0b1101001;
+    opCodes["CMP"] = 0b1101010;
 
     //FPU
     opCodes["FADD"] = 0b1110000;
@@ -70,12 +73,71 @@ Assembler::Assembler(bool mode = false):onDebug{mode} {
     //HACF -- HALT AND CATCH FIRE
     opCodes["HLT"] = 0b1111111;
 
-
+    //////////////////////////////////////////
     /////// Number of Arguments of each opCode
+
+    //Basic operationns
     numOfArgs["NOP"] = 0;
+    numOfArgs["LDA"] = 1;
+    numOfArgs["LDI"] = 1;
+    numOfArgs["JMP"] = 1;
+    numOfArgs["MI"] = 2;
+    numOfArgs["MO"] = 2;
+
+    //Conditional Jumps
+    numOfArgs["JC"] = 1;
+    numOfArgs["JO"] = 1;
+    numOfArgs["JG"] = 1;
+    numOfArgs["JGE"] = 1;
+    numOfArgs["JE"] = 1;
+    numOfArgs["JLE"] = 1;
+    numOfArgs["JL"] = 1;
+    numOfArgs["JNO"] = 1;
+    numOfArgs["JZ"] = 1;
+    numOfArgs["JNZ"] = 1;
+    numOfArgs["JS"] = 1;
+    numOfArgs["JNS"] = 1;
+
+    // ALU
     numOfArgs["ADD"] = 3;
+    numOfArgs["SUB"] = 3;
+    numOfArgs["MUL"] = 3;
+    numOfArgs["DIV"] = 3;
+    numOfArgs["ADDI"] = 3;
+    numOfArgs["SUBI"] = 3;
+    numOfArgs["MULI"] = 3;
+    numOfArgs["DIVI"] = 3;
+    //Complex ALU operations
+    numOfArgs["SQRT"] = 3;
+    numOfArgs["MOD"] = 3;
+
+    // Bitwise operationns
+    numOfArgs["AND"] = 3;
+    numOfArgs["OR"] = 3;
+    numOfArgs["NAND"] = 3;
+    numOfArgs["NOR"] = 3;
+    numOfArgs["NOT"] = 3;
+    numOfArgs["XOR"] = 3;
+    numOfArgs["XOR"] = 3;
+    numOfArgs["SHL"] = 3;
+    numOfArgs["SHR"] = 3;
+    numOfArgs["ROT"] = 3;
+
+    //FPU
+    numOfArgs["FADD"] = 3;
+    numOfArgs["FSUB"] = 3;
+    numOfArgs["FMUL"] = 3;
+    numOfArgs["FDIV"] = 3;
+    numOfArgs["FSQRT"] = 3;
+    numOfArgs["ITOF"] = 3;
+    numOfArgs["FTOI"] = 3;
+    numOfArgs["FMOD"] = 3;
+
+    //HACF -- HALT AND CATCH FIRE
+    numOfArgs["HLT"] = 0;
 
 
+    ////////////////////////////////
     //Registers
     reg["r1"] = 0b000;
     reg["r2"] = 0b001;
@@ -126,7 +188,7 @@ void Assembler::instruction::add(std::string s) {
 void Assembler::instruction::add(vector<std::string> &v) {
     arguments.reserve(arguments.size() + v.size());       //Memory Pre allocation
     arguments.insert(arguments.end(), v.begin(), v.end());
-    size+= v.size();
+    size += v.size();
 }
 
 Assembler::error::error(int line, int index, string type = "", string message = "", string line_text = "")
@@ -134,25 +196,108 @@ Assembler::error::error(int line, int index, string type = "", string message = 
 }
 
 
-
 const string Assembler::error::get() {
-    return type + " on line :" + to_string(line) + ":" + to_string(index) + "\t" + message ;
+    return type + " on line :" + to_string(line) + ":" + to_string(index) + "\t" + message;
 }
+
+
+bool Assembler::isEmptyLine(const string &line) {
+    auto comment = x3::omit[
+            "//" >> *(char_ - eol)
+            | "/*" >> *(char_ - "*/") >> "*/"
+    ];
+
+    auto iter_start = line.begin();
+    auto iter_end = line.end();
+
+    bool success = phrase_parse(
+            iter_start,
+            iter_end,
+            *comment,
+            space
+    );
+
+    return success && (iter_end == iter_start);
+}
+
+bool Assembler::isData(const string &line) {
+    auto comment = x3::omit[
+            "//" >> *(char_ - eol)
+            | "/*" >> *(char_ - "*/") >> "*/"
+    ];
+    auto iter_start = line.begin();
+    auto iter_end = line.end();
+
+    auto data = x3::rule<class name, std::string>{}
+                        = lexeme["section "] >> lexeme[".data"];
+
+    bool success = parse(
+            iter_start,
+            iter_end,
+            skip(space)[data] >> *(space | comment)
+    );
+
+    return success && (iter_end == iter_start);
+}
+
+bool Assembler::isText(const string &line) {
+    auto comment = x3::omit[
+            "//" >> *(char_ - eol)
+            | "/*" >> *(char_ - "*/") >> "*/"
+    ];
+    auto iter_start = line.begin();
+    auto iter_end = line.end();
+
+    auto data = x3::rule<class name, std::string>{}
+                        = lexeme["section "] >> lexeme[".text"];
+
+    bool success = parse(
+            iter_start,
+            iter_end,
+            skip(space)[data] >> *(space | comment)
+    );
+
+    return success && (iter_end == iter_start);
+}
+
+bool Assembler::isStart(const string &line) {
+    auto comment = x3::omit[
+            "//" >> *(char_ - eol)
+            | "/*" >> *(char_ - "*/") >> "*/"
+    ];
+    auto iter_start = line.begin();
+    auto iter_end = line.end();
+
+    auto data = x3::rule<class name, std::string>{}
+                        = lexeme["section "] >> lexeme[".start"];
+
+    bool success = parse(
+            iter_start,
+            iter_end,
+            skip(space)[data] >> *(space | comment)
+    );
+
+    return success && (iter_end == iter_start);
+}
+
 
 bool Assembler::lineParser(const string line) {
 
     // Define parser rules
     auto name = x3::rule<class name, std::string>{}
-        = lexeme [char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];;
+                        = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
 
-    auto args_l = x3::rule<class l, std::vector<std::string> >{}
-        = " " >> (name % skip(space)[","]);
+    auto bin_val = x3::rule<class bin_val, std::string>{}
+                           = lexeme[char_("0x") >> +char_("0-1")];
 
-    auto comment
-            = x3::omit [
-                    "//" >> *(char_-eol)
-                    | "/*" >> *(char_ - "*/") >> "*/"
-            ];
+    auto hex_val = x3::rule<class hex_val, std::string>{}
+                           = lexeme[char_("0x") >> +char_("0-9A-F")];
+
+
+    auto comment = x3::omit[
+            "//" >> *(char_ - eol)
+            | "/*" >> *(char_ - "*/") >> "*/"
+    ];
 
     //string iterators
     auto iter_start = line.begin();
@@ -160,13 +305,13 @@ bool Assembler::lineParser(const string line) {
 
     instruction inst;
 
-
+    // Bind
     auto add = [&](auto &ctx) { inst.add(_attr(ctx)); };
 
     bool result = parse(
             iter_start,
             iter_end,
-            skip(comment|space) [ name[add] >> *(name[add] % ',') ] >> *(space | comment)
+            skip(comment | space)[name[add] >> *(name[add] % ',')] >> *(space | comment)
     );
 
     //Testing
@@ -174,7 +319,7 @@ bool Assembler::lineParser(const string line) {
     if (result && inst.size && opCodes.find(inst.opCode) == opCodes.end()) {    // given identifier is not valid opCode
         result = false;
 
-        errors.push_back(
+        errors.emplace_back(
                 error(cur_line,
                       iter_end - iter_start,
                       "Syntax Error",
@@ -182,15 +327,16 @@ bool Assembler::lineParser(const string line) {
                       line
                 )
         );
-    }else if (result && inst.size != numOfArgs[inst.opCode]){  // Check if have right number of arguments
+    } else if (result && inst.size != numOfArgs[inst.opCode]) {  // Check if have right number of arguments
 
         result = false;
 
-        errors.push_back(
+        errors.emplace_back(
                 error(cur_line,
                       iter_start - line.begin(),
                       "Logic Error",
-                      inst.opCode +" expects " + to_string(numOfArgs[inst.opCode]) + " argument(s), got "  + to_string(inst.size) + ".",    // Example: ADD expects 3 arguments, got 4
+                      inst.opCode + " expects " + to_string(numOfArgs[inst.opCode]) + " argument(s), got " +
+                      to_string(inst.size) + ".",    // Example: ADD expects 3 arguments, got 4
                       line
                 )
         );
@@ -200,11 +346,11 @@ bool Assembler::lineParser(const string line) {
 
         result = false;
 
-        errors.push_back(
+        errors.emplace_back(
                 error(cur_line,
                       iter_start - line.begin(),
                       "Syntax Error",
-                      "Unexpected -> " + string(iter_start,iter_end),
+                      "Unexpected -> " + string(iter_start, iter_end),
                       line
                 )
         );
@@ -213,15 +359,18 @@ bool Assembler::lineParser(const string line) {
     // Code used for debugging
     if (onDebug) {
         cout << cur_line << ": " << inst.opCode << "(" << numOfArgs[inst.opCode] << ")" << endl;
-        for (auto i : inst.arguments) cout << "\t->" << i << std::endl;
 
-        for (auto e : errors) {
-            cout << e.get() << endl;
-        }
+        for (auto i : inst.arguments)
+            cout << "\t->" << i << std::endl;
+
+        if (!result)
+            for (auto e : errors)
+                cout << e.get() << endl;
     }
 
     //
 
+    if (result) instructions.push_back(inst);
     return result;
 }
 
@@ -231,13 +380,15 @@ bool Assembler::parser(const string &s) {
     stringstream stream(s);
     string line;
     while (std::getline(stream, line)) {
-        cur_line ++;
+        cur_line++;
         lineParser(line);
     }
 
 }
 
 bool Assembler::parser(ifstream &fs) {
+
+
     cur_line = 0;
     string line;
     bool success = true;
@@ -245,7 +396,21 @@ bool Assembler::parser(ifstream &fs) {
     while (std::getline(fs, line)) {
 
         cur_line++;
-        if (!line.size()) continue;   //skip empty lines
+
+        if (isEmptyLine(line)) continue;      //skip empty lines
+
+        if (isData(line)) {
+            continue;
+        }
+        if (isText(line)) {
+            continue;
+        }
+        if (isStart(line)) {
+            continue;
+        }
+
+
+
         success =
                 lineParser(line)
                 && success;

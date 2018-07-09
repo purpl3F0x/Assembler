@@ -1,11 +1,11 @@
-/*  assembler.h
+/*  assembler.hpp
  *
  *
  *  Created by Stavros Avramdis on 7/1/18.
 */
 
-#ifndef UNTITLED_ASSEMBLER_H
-#define UNTITLED_ASSEMBLER_H
+#ifndef UNTITLED_ASSEMBLER_HPP
+#define UNTITLED_ASSEMBLER_HPP
 
 
 #include <boost/fusion/adapted.hpp>
@@ -24,6 +24,7 @@
 
 
 namespace asmbl {
+
 
 using namespace std;
 
@@ -56,15 +57,15 @@ public:
 
     void setInputFile(string file);
 
-    bool parseString(const string& s){ return parser(s); }
+    bool parseString(const string &s) { return parser(s); }
 
     bool parseFile() {
         ifstream infile;
         infile.open(cur_file);
         if (onDebug) {
-            cout << "Opening " << cur_file << "..." << endl;
-            if (infile) cout << "Ok" << endl;
-            else cout << "Cannot Open" << endl;
+            cout << "Opening " << cur_file << " ..." << endl;
+            if (infile) cout << "Ok\n\n";
+            else cout << "Cannot Open File\n\n";
         }
         return parser(infile);
     }
@@ -81,9 +82,12 @@ private:
         string opCode;
         vector<string> arguments;
         int size;
+
         instruction();
+
         void add(string s);
-        void add(vector<std::string>& v);
+
+        void add(vector<std::string> &v);
     };
 
 
@@ -104,7 +108,7 @@ private:
     string cur_file;
     bool onDebug;
 
-    // All maps provde binary value of each type
+    // All maps provιde binary value of each type
     map<string, int> opCodes;       // List off all opCodes
     map<string, int> numOfArgs;     // Number of Arguments of each opCode
     map<string, int> reg;           // Registers
@@ -115,9 +119,17 @@ private:
     vector<error> errors;
     vector<string> out;
 
+    bool isEmptyLine(const string &line);
+
+    bool isData(const string &line);
+
+    bool isText(const string &line);
+
+    bool isStart(const string &line);
+
     bool lineParser(const string line);
 
-    bool parser(const string& s);
+    bool parser(const string &s);
 
     bool parser(ifstream &fs);
 
