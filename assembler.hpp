@@ -1,11 +1,18 @@
 /*  assembler.hpp
  *
+ * /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ * --------------------------------------------------------
+ * This project contains an Assembler I made in c++
+ * for a project I am  making, by re-inventing the wheel,
+ * and creating a 16-bit computer on an FPGA
+ * --------------------------------------------------------
+ * \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
  *
- *  Created by Stavros Avramdis on 7/1/18.
+ *  Created by Stavros Avramidis on 7/1/18.
 */
 
-#ifndef UNTITLED_ASSEMBLER_HPP
-#define UNTITLED_ASSEMBLER_HPP
+#ifndef ASSEMBLER_HPP
+#define ASSEMBLER_HPP
 
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
@@ -34,6 +41,7 @@ using x3::alpha;
 using x3::char_;
 using x3::double_;
 using x3::eol;
+using x3::int_;
 using x3::lexeme;
 using x3::lit;
 using x3::parse;
@@ -45,89 +53,103 @@ using ascii::space;
 class Assembler {
 
  public:
- Assembler(bool mode);
+  Assembler(bool mode);
 
- int opCode(string s);
+  int opCode(string s);
 
- int Register(string s);
+  int Register(string s);
 
- void setInputFile(string file);
+  void setInputFile(string file);
 
- bool parseString(const string &s) { return parser(s); }
+  bool parseString(const string &s) { return parser(s); }
 
- bool parseFile() {
-   ifstream infile;
-   infile.open(cur_file);
-   if (onDebug) {
-     cout << "Opening " << cur_file << " ..." << endl;
-     if (infile) cout << "Ok\n\n";
-     else cout << "Cannot Open File\n\n";
-   }
-   return parser(infile);
- }
+  bool parseFile() {
+    ifstream infile;
+    infile.open(cur_file);
+    if (onDebug) {
+      cout << "Opening " << cur_file << " ..." << endl;
+      if (infile) cout << "Ok\n\n";
+      else cout << "Cannot Open File\n\n";
+    }
+    return parser(infile);
+  }
 
- void translate();
+  void translate();
 
- void printErrors();
+  void printErrors();
 
- friend string tobinary(int, int);
+  friend string tobinary(int, int);
 
  private:
- struct instruction {
-   string opCode;
-   vector<string> arguments;
-   int size;
+  struct instruction {
+    string opCode;
+    vector<string> arguments;
+    int size;
 
-   instruction();
+    instruction();
 
-   void add(string s);
+    void add(string s);
 
-   void add(vector<std::string> &v);
- };
+    void add(vector<std::string> &v);
+  };
 
- struct error {
-   int line;
-   int index;
-   string type;
-   string message;
-   string line_text;
+  struct data_type {
+    string type;
+    string name;
+    string value;
 
-   error(int line, int index, string type, string message, string line_text);
+    void setType(string &t) { type = t; }
+    void setName(string &n) { name = n; }
+    void setVal(string &v) { value = v; }
+  };
 
-   const string get();
- };
+  struct error {
+    int line;
+    int index;
+    string type;
+    string message;
+    string line_text;
 
- int cur_line;
- string cur_file;
- bool onDebug;
+    error(int line, int index, string type, string message, string line_text);
 
- // All maps provιde binary value of each type
- map<string, int> opCodes;       // List off all opCodes
- map<string, int> numOfArgs;     // Number of Arguments of each opCode
- map<string, int> reg;           // Registers
- map<string, int> variables;     // Variable Stack
- map<string, int> consts;        // Const Stack
+    const string get();
+  };
 
- vector<instruction> instructions;
- vector<error> errors;
- vector<string> out;
+  int cur_line;
+  string cur_file;
+  bool onDebug;
 
- bool isEmptyLine(const string &line);
+  // All maps provιde binary value of each type
+  map<string, short> opCodes;       // List off all opCodes
+  map<string, short> numOfArgs;     // Number of Arguments of each opCode
+  map<string, short> reg;           // Registers
+  map<string, short> data;          // Variable Stack
+  map<string, short> text;          // Const Stack
 
- bool isData(const string &line);
+  vector<instruction> instructions;
+  vector<error> errors;
+  vector<string> out;
 
- bool isText(const string &line);
+  bool isEmptyLine(const string &line);
 
- bool isStart(const string &line);
+  bool isData(const string &line);
 
- bool lineParser(const string &line);
+  bool isText(const string &line);
 
- bool parser(const string &s);
+  bool isStart(const string &line);
 
- bool parser(ifstream &fs);
+  bool dataParser(const string &line);
+
+  bool textParser(const string &line);
+
+  bool lineParser(const string &line);
+
+  bool parser(const string &s);
+
+  bool parser(ifstream &fs);
 
 };
 
 }
 
-#endif //UNTITLED_ASSEMBLER_H
+#endif //ASSEMBLER_H

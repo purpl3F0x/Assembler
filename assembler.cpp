@@ -1,6 +1,7 @@
-//
-// Created by purpl3f0x on 7/1/18.
-//
+/*  assembler.cpp
+ *
+ *  Created by Stavros Avramidis on 7/1/18.
+*/
 
 #include "assembler.hpp"
 
@@ -9,7 +10,8 @@ namespace asmbl {
 Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
   //Basic operationns
-  opCodes["NOP"] = 0b0000001;
+  opCodes["NOP"] = 0b0000000;
+  opCodes["RI"] = 0b0000001;
   opCodes["LDA"] = 0b0000010;
   opCodes["LDI"] = 0b0000011;
   opCodes["STA"] = 0b0000100;
@@ -151,13 +153,13 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 int Assembler::opCode(string s) {
   auto it = opCodes.find(s);
 
-  if (it != opCodes.end()) return it->second;
+  if (it!=opCodes.end()) return it->second;
   else throw logic_error("Got \" " + s + "\" expected an opcode");
 }
 
 int Assembler::Register(string s) {
   auto it = reg.find(s);
-  if (it != reg.end()) return it->second;
+  if (it!=reg.end()) return it->second;
   else throw logic_error(s + " is not a  register");
 }
 
@@ -168,7 +170,7 @@ void Assembler::setInputFile(string infile) {
 string tobinary(int n, int d = 16) {
   string s;
   while (d--) {
-    s = std::to_string(n % 2) + s;
+    s = std::to_string(n%2) + s;
     n = n >> 1;
   }
   return s;
@@ -212,7 +214,7 @@ bool Assembler::isEmptyLine(const string &line) {
       space
   );
 
-  return success && (iter_end == iter_start);
+  return success && (iter_end==iter_start);
 }
 
 bool Assembler::isData(const string &line) {
@@ -232,7 +234,7 @@ bool Assembler::isData(const string &line) {
       skip(space)[data] >> *(space | comment)
   );
 
-  return success && (iter_end == iter_start);
+  return success && (iter_end==iter_start);
 }
 
 bool Assembler::isText(const string &line) {
@@ -252,7 +254,7 @@ bool Assembler::isText(const string &line) {
       skip(space)[data] >> *(space | comment)
   );
 
-  return success && (iter_end == iter_start);
+  return success && (iter_end==iter_start);
 }
 
 bool Assembler::isStart(const string &line) {
@@ -272,7 +274,60 @@ bool Assembler::isStart(const string &line) {
       skip(space)[data] >> *(space | comment)
   );
 
-  return success && (iter_end == iter_start);
+  return success && (iter_end==iter_start);
+}
+
+bool Assembler::dataParser(const string &line) {
+
+  auto name = x3::rule<class name, std::string>{}
+                  = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
+
+  auto bin_val = x3::rule<class bin_val, std::string>{}
+                     = lexeme[char_("0b") >> +char_("0-1")];
+
+  auto hex_val = x3::rule<class hex_val, std::string>{}
+                     = lexeme[char_("0x") >> +char_("0-9A-F")];
+  auto str = x3::rule<class str, std::string>{}
+                 = '\"' >> lexeme[char_] >> '\"';
+
+  auto types = x3::rule<class types, std::string>{}
+                   = lexeme["int"] | lexeme["bool"] | lexeme["char"] | lexeme["float"];
+
+  auto value = x3::rule<class declaration, std::string>{}
+                   = lexeme[+char_("0-9")] | lexeme[bin_val] | lexeme[hex_val] | str
+          | lexeme[+char_("0-9")] >> *("." >> +char_("0-9")) | lexeme["true"] | lexeme["false"];
+
+  auto comment = x3::omit[
+      "//" >> *(char_ - eol)
+          | "/*" >> *(char_ - "*/") >> "*/"
+  ];
+
+  //string iterators
+  auto iter_start = line.begin();
+  auto iter_end = line.end();
+
+
+  // Bind
+  data_type d;
+  auto setName = [&](auto &ctx) { d.setName(_attr(ctx)); };
+  auto setType = [&](auto &ctx) { d.setType(_attr(ctx)); };
+  auto setVal = [&](auto &ctx) { d.setVal(_attr(ctx)); };
+
+  bool result = parse(
+      iter_start,
+      iter_end,
+      skip(comment | space)[types[setType]]
+          >> space
+          >> skip(comment | space)[name[setName]]
+          >> space
+          >> skip(comment | space)[value[setVal]]
+          >> *(space | comment)
+  );
+
+  cout << d.type << " " << d.name << " " << d.value << endl;
+
+  return true;
+
 }
 
 bool Assembler::lineParser(const string &line) {
@@ -304,12 +359,12 @@ bool Assembler::lineParser(const string &line) {
   bool result = parse(
       iter_start,
       iter_end,
-      skip(comment | space)[name[add] >> *(name[add] % ',')] >> *(space | comment)
+      skip(comment | space)[name[add] >> *(name[add]%',')] >> *(space | comment)
   );
 
   //Testing
 
-  if (result && inst.size && opCodes.find(inst.opCode) == opCodes.end()) {    // given identifier is not valid opCode
+  if (result && inst.size && opCodes.find(inst.opCode)==opCodes.end()) {    // given identifier is not valid opCode
     result = false;
 
     errors.emplace_back(
@@ -320,7 +375,7 @@ bool Assembler::lineParser(const string &line) {
               line
         )
     );
-  } else if (result && inst.size != numOfArgs[inst.opCode]) {  // Check if have right number of arguments
+  } else if (result && inst.size!=numOfArgs[inst.opCode]) {  // Check if have right number of arguments
 
     result = false;
 
@@ -335,7 +390,7 @@ bool Assembler::lineParser(const string &line) {
     );
   }
 
-  if (iter_end != iter_start) {   // Create an error if parser
+  if (iter_end!=iter_start) {   // Create an error if parser
 
     result = false;
 
@@ -381,6 +436,10 @@ bool Assembler::parser(const string &s) {
 
 bool Assembler::parser(ifstream &fs) {
 
+  bool parseData = false;
+  bool parseText = false;
+  bool parseStart = false;
+
   cur_line = 0;
   string line;
   bool success = true;
@@ -389,23 +448,77 @@ bool Assembler::parser(ifstream &fs) {
 
     cur_line++;
 
-    if (isEmptyLine(line)) continue;      //skip empty lines
+    if (isEmptyLine(line)) continue;          //skip empty lines
 
     if (isData(line)) {
+      if (parseData) {                        // Return Error if Already have parsed Data section
+        errors.emplace_back(
+            error(cur_line,
+                  line.find('s'),             // Find where section starts
+                  "Logic Error",
+                  "Redefinition of .data ,already defined at " + std::to_string(parseData),
+                  line
+            )
+        );
+        success = false;
+      } else parseData = true;
       continue;
     }
+
     if (isText(line)) {
+      if (parseText) {                           // Return Error if Already have parsed Text section
+        errors.emplace_back(
+            error(cur_line,
+                  line.find('s'),                // Find where section starts
+                  "Logic Error",
+                  "Redefinition of .text ,already defined at " + std::to_string(parseData),
+                  line
+            )
+        );
+        success = false;
+      } else parseText = true;
       continue;
     }
+
     if (isStart(line)) {
+      if (parseStart) {                          // Return Error if Already have parsed Start section
+        errors.emplace_back(
+            error(cur_line,
+                  line.find('s'),                 // Find where section starts
+                  "Logic Error",
+                  "Redefinition of .text ,already defined at " + std::to_string(parseData),
+                  line
+            )
+        );
+        success = false;
+      } else parseStart = true;
       continue;
     }
 
-    success =
-        lineParser(line)
-            && success;
+    if (parseStart)
+      success = lineParser(line) && success;
 
-  }
+    else if (parseText)
+      continue;
+      //success = textParser(line) && success;
+
+    else if (parseData)
+      success = dataParser(line) && success;
+
+    else {
+      errors.emplace_back(                      //throw error for instructions/declerations outside of sections
+          error(cur_line,
+                line.find('s'),
+                "Syntax Error",
+                "Unexpeced outside of section",
+                line
+          )
+      );
+      success = false;
+    }
+
+  } //end of while loop
+  return success;
 }
 
 } //End of asmbl namesapce

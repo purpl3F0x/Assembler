@@ -48,294 +48,291 @@
  
 </span><span class="s2">#include </span><span class="s3">&quot;assembler.hpp&quot;</span><span class="s1"> 
  
- 
 </span><span class="s2">namespace </span><span class="s1">asmbl { 
- 
  
 Assembler</span><span class="s2">::</span><span class="s1">Assembler(</span><span class="s2">bool </span><span
         class="s1">mode </span><span class="s2">= false</span><span class="s1">) </span><span class="s2">: </span><span
         class="s1">onDebug{mode} {
  
-    </span><span class="s0">//Basic operationns</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;NOP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Basic operationns</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;NOP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;LDA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;LDA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;LDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;LDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000011</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;STA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;STA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000100</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000101</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;MI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;MI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000110</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;MO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;MO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0000111</span><span class="s1">;
  
  
-    </span><span class="s0">//Conditional Jumps</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;JC&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Conditional Jumps</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;JC&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JG&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JG&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JGE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JGE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001011</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001100</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JLE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JLE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001101</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001110</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JNO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JNO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0001111</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0010000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JNZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JNZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0010001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0010010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;JNS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;JNS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b0010011</span><span class="s1">;
  
-    </span><span class="s0">// ALU</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;ADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">// ALU</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;ADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;SUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;SUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;MUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;MUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;DIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;DIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000011</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;ADDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;ADDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000100</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;SUBI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;SUBI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000101</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;MULI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;MULI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000110</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;DIVI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;DIVI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1000111</span><span class="s1">;
-    </span><span class="s0">//Complex ALU operations</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;SQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Complex ALU operations</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;SQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1001000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;MOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;MOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1001001</span><span class="s1">;
  
-    </span><span class="s0">// Bitwise operationns</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;AND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">// Bitwise operationns</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;AND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;OR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;OR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b11000001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;NAND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;NAND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;NOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;NOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100011</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;NOT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;NOT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100100</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100101</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100110</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;SHL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;SHL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1100111</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;SHR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;SHR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1101000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;ROT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;ROT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1101001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;CMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;CMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1101010</span><span class="s1">;
  
-    </span><span class="s0">//FPU</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;FADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//FPU</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;FADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110000</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FSUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FSUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110001</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FMUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FMUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110010</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FDIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FDIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110011</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FSQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FSQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110100</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;ITOF&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;ITOF&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110101</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FTOI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FTOI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1110111</span><span class="s1">;
-    opCodes[</span><span class="s3">&quot;FMOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  opCodes[</span><span class="s3">&quot;FMOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1111000</span><span class="s1">;
  
-    </span><span class="s0">//HACF -- HALT AND CATCH FIRE</span><span class="s1"> 
-    opCodes[</span><span class="s3">&quot;HLT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//HACF -- HALT AND CATCH FIRE</span><span class="s1"> 
+  opCodes[</span><span class="s3">&quot;HLT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0b1111111</span><span class="s1">;
  
-    </span><span class="s0">//////////////////////////////////////////</span><span class="s1"> 
-    </span><span class="s0">/////// Number of Arguments of each opCode</span><span class="s1"> 
+  </span><span class="s0">//////////////////////////////////////////</span><span class="s1"> 
+  </span><span class="s0">/////// Number of Arguments of each opCode</span><span class="s1"> 
  
-    </span><span class="s0">//Basic operationns</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;NOP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Basic operationns</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;NOP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;LDA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;LDA&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;LDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;LDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JMP&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;MI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;MI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">2</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;MO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;MO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">2</span><span class="s1">;
  
-    </span><span class="s0">//Conditional Jumps</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;JC&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Conditional Jumps</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;JC&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JG&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JG&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JGE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JGE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JLE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JLE&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JNO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JNO&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JNZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JNZ&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;JNS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;JNS&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">1</span><span class="s1">;
  
-    </span><span class="s0">// ALU</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;ADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">// ALU</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;ADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;SUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;SUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;MUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;MUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;DIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;DIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;ADDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;ADDI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;SUBI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;SUBI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;MULI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;MULI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;DIVI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;DIVI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    </span><span class="s0">//Complex ALU operations</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;SQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//Complex ALU operations</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;SQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;MOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
- 
-    </span><span class="s0">// Bitwise operationns</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;AND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;OR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;NAND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;NOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;NOT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;SHL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;SHR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;ROT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;MOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
  
-    </span><span class="s0">//FPU</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;FADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">// Bitwise operationns</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;AND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FSUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;OR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FMUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;NAND&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FDIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;NOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FSQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;NOT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;ITOF&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FTOI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;XOR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
-    numOfArgs[</span><span class="s3">&quot;FMOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  numOfArgs[</span><span class="s3">&quot;SHL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;SHR&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;ROT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">3</span><span class="s1">;
  
-    </span><span class="s0">//HACF -- HALT AND CATCH FIRE</span><span class="s1"> 
-    numOfArgs[</span><span class="s3">&quot;HLT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+  </span><span class="s0">//FPU</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;FADD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FSUB&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FMUL&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FDIV&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FSQRT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;ITOF&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FTOI&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+  numOfArgs[</span><span class="s3">&quot;FMOD&quot;</span><span class="s1">] </span><span class="s2">= </span><span
+        class="s4">3</span><span class="s1">;
+ 
+  </span><span class="s0">//HACF -- HALT AND CATCH FIRE</span><span class="s1"> 
+  numOfArgs[</span><span class="s3">&quot;HLT&quot;</span><span class="s1">] </span><span class="s2">= </span><span
         class="s4">0</span><span class="s1">;
  
  
-    </span><span class="s0">////////////////////////////////</span><span class="s1"> 
-    </span><span class="s0">//Registers</span><span class="s1"> 
-    reg[</span><span class="s3">&quot;r1&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b000</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r2&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b001</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r3&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b010</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r4&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b011</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r5&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b100</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r6&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b101</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r7&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b110</span><span class="s1">;
-    reg[</span><span class="s3">&quot;r8&quot;</span><span class="s1">] </span><span class="s2">= </span><span
-        class="s4">0b111</span><span class="s1">;
+  </span><span class="s0">////////////////////////////////</span><span class="s1"> 
+  </span><span class="s0">//Registers</span><span class="s1"> 
+  reg[</span><span class="s3">&quot;r1&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b000</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r2&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b001</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r3&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b010</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r4&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b011</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r5&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b100</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r6&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b101</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r7&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b110</span><span
+        class="s1">;
+  reg[</span><span class="s3">&quot;r8&quot;</span><span class="s1">] </span><span class="s2">= </span><span class="s4">0b111</span><span
+        class="s1">;
  
 } 
  
- 
 </span><span class="s2">int </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">opCode(string s) { 
-    </span><span class="s2">auto </span><span class="s1">it </span><span class="s2">= </span><span class="s1">opCodes.find(s); 
+  </span><span class="s2">auto </span><span class="s1">it </span><span class="s2">= </span><span class="s1">opCodes.find(s); 
  
-    </span><span class="s2">if </span><span class="s1">(it </span><span class="s2">!= </span><span class="s1">opCodes.end()) </span><span
+  </span><span class="s2">if </span><span class="s1">(it </span><span class="s2">!= </span><span class="s1">opCodes.end()) </span><span
         class="s2">return </span><span class="s1">it</span><span class="s2">-&gt;</span><span class="s1">second;
-    </span><span class="s2">else throw </span><span class="s1">logic_error(</span><span
-        class="s3">&quot;Got </span><span class="s4">\&quot;</span><span class="s3"> &quot; </span><span
-        class="s2">+ </span><span class="s1">s </span><span class="s2">+ </span><span class="s3">&quot;</span><span
-        class="s4">\&quot;</span><span class="s3"> expected an opcode&quot;</span><span class="s1">);
+  </span><span class="s2">else throw </span><span class="s1">logic_error(</span><span class="s3">&quot;Got </span><span
+        class="s4">\&quot;</span><span class="s3"> &quot; </span><span class="s2">+ </span><span
+        class="s1">s </span><span class="s2">+ </span><span class="s3">&quot;</span><span class="s4">\&quot;</span><span
+        class="s3"> expected an opcode&quot;</span><span class="s1">);
 } 
  
 </span><span class="s2">int </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">Register(string s) { 
-    </span><span class="s2">auto </span><span class="s1">it </span><span class="s2">= </span><span class="s1">reg.find(s); 
-    </span><span class="s2">if </span><span class="s1">(it </span><span class="s2">!= </span><span
+  </span><span class="s2">auto </span><span class="s1">it </span><span class="s2">= </span><span class="s1">reg.find(s); 
+  </span><span class="s2">if </span><span class="s1">(it </span><span class="s2">!= </span><span
         class="s1">reg.end()) </span><span class="s2">return </span><span class="s1">it</span><span
         class="s2">-&gt;</span><span class="s1">second;
-    </span><span class="s2">else throw </span><span class="s1">logic_error(s </span><span class="s2">+ </span><span
+  </span><span class="s2">else throw </span><span class="s1">logic_error(s </span><span class="s2">+ </span><span
         class="s3">&quot; is not a  register&quot;</span><span class="s1">);
 } 
  
 </span><span class="s2">void </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">setInputFile(string infile) { 
-    cur_file </span><span class="s2">= </span><span class="s1">infile; 
+  cur_file </span><span class="s2">= </span><span class="s1">infile; 
 } 
  
 string tobinary(</span><span class="s2">int </span><span class="s1">n, </span><span class="s2">int </span><span
         class="s1">d </span><span class="s2">= </span><span class="s4">16</span><span class="s1">) {
-    string s; 
-    </span><span class="s2">while </span><span class="s1">(d</span><span class="s2">--</span><span class="s1">) { 
-        s </span><span class="s2">= </span><span class="s1">std</span><span class="s2">::</span><span class="s1">to_string(n </span><span
-        class="s2">% </span><span class="s4">2</span><span class="s1">) </span><span class="s2">+ </span><span
-        class="s1">s;
-        n </span><span class="s2">= </span><span class="s1">n </span><span class="s2">&gt;&gt; </span><span
+  string s; 
+  </span><span class="s2">while </span><span class="s1">(d</span><span class="s2">--</span><span class="s1">) { 
+    s </span><span class="s2">= </span><span class="s1">std</span><span class="s2">::</span><span
+        class="s1">to_string(n </span><span class="s2">% </span><span class="s4">2</span><span class="s1">) </span><span
+        class="s2">+ </span><span class="s1">s;
+    n </span><span class="s2">= </span><span class="s1">n </span><span class="s2">&gt;&gt; </span><span
         class="s4">1</span><span class="s1">;
-    } 
-    </span><span class="s2">return </span><span class="s1">s; 
+  } 
+  </span><span class="s2">return </span><span class="s1">s; 
 } 
  
 </span><span class="s0">/* Privare Methods */</span><span class="s1"> 
@@ -345,19 +342,19 @@ Assembler</span><span class="s2">::</span><span class="s1">instruction</span><sp
  
 </span><span class="s2">void </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">instruction</span><span
         class="s2">::</span><span class="s1">add(std</span><span class="s2">::</span><span class="s1">string s) {
-    </span><span class="s2">if </span><span class="s1">(</span><span class="s2">!++</span><span
+  </span><span class="s2">if </span><span class="s1">(</span><span class="s2">!++</span><span
         class="s1">size) opCode </span><span class="s2">= </span><span class="s1">s;
-    </span><span class="s2">else </span><span class="s1">arguments.push_back(s); 
+  </span><span class="s2">else </span><span class="s1">arguments.push_back(s); 
 } 
  
 </span><span class="s2">void </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">instruction</span><span
         class="s2">::</span><span class="s1">add(vector</span><span class="s2">&lt;</span><span
         class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
         class="s2">&gt; &amp;</span><span class="s1">v) {
-    arguments.reserve(arguments.size() </span><span class="s2">+ </span><span class="s1">v.size());       </span><span
+  arguments.reserve(arguments.size() </span><span class="s2">+ </span><span class="s1">v.size());       </span><span
         class="s0">//Memory Pre allocation</span><span class="s1">
-    arguments.insert(arguments.end(), v.begin(), v.end()); 
-    size </span><span class="s2">+= </span><span class="s1">v.size(); 
+  arguments.insert(arguments.end(), v.begin(), v.end()); 
+  size </span><span class="s2">+= </span><span class="s1">v.size(); 
 } 
  
 Assembler</span><span class="s2">::</span><span class="s1">error</span><span class="s2">::</span><span
@@ -366,334 +363,323 @@ Assembler</span><span class="s2">::</span><span class="s1">error</span><span cla
         class="s1">, string message </span><span class="s2">= </span><span class="s3">&quot;&quot;</span><span
         class="s1">, string line_text </span><span class="s2">= </span><span class="s3">&quot;&quot;</span><span
         class="s1">)
-        </span><span class="s2">: </span><span class="s1">line{line}, index{index}, type{type}, message{message}, line_text{line_text} { 
+    </span><span class="s2">: </span><span class="s1">line{line}, index{index}, type{type}, message{message}, line_text{line_text} { 
 } 
- 
  
 </span><span class="s2">const </span><span class="s1">string Assembler</span><span class="s2">::</span><span class="s1">error</span><span
         class="s2">::</span><span class="s1">get() {
-    </span><span class="s2">return </span><span class="s1">type </span><span class="s2">+ </span><span class="s3">&quot; on line :&quot; </span><span
+  </span><span class="s2">return </span><span class="s1">type </span><span class="s2">+ </span><span class="s3">&quot; on line :&quot; </span><span
         class="s2">+ </span><span class="s1">to_string(line) </span><span class="s2">+ </span><span class="s3">&quot;:&quot; </span><span
         class="s2">+ </span><span class="s1">to_string(index) </span><span class="s2">+ </span><span
         class="s3">&quot;</span><span class="s4">\t</span><span class="s3">&quot; </span><span class="s2">+ </span><span
         class="s1">message;
 } 
  
- 
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">isEmptyLine(</span><span
         class="s2">const </span><span class="s1">string </span><span class="s2">&amp;</span><span class="s1">line) {
-    </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">omit[
-            </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+      </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
         class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
-            </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
+          </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
         class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span class="s2">- </span><span class="s3">&quot;*/&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
-    ]; 
+  ]; 
  
-    </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
-    </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
+  </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
+  </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
  
-    </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">phrase_parse( 
-            iter_start, 
-            iter_end, 
-            </span><span class="s2">*</span><span class="s1">comment, 
-            space 
-    ); 
+  </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">phrase_parse( 
+      iter_start, 
+      iter_end, 
+      </span><span class="s2">*</span><span class="s1">comment, 
+      space 
+  ); 
  
-    </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
+  </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
         class="s1">(iter_end </span><span class="s2">== </span><span class="s1">iter_start);
 } 
  
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span
         class="s1">isData(</span><span class="s2">const </span><span class="s1">string </span><span
         class="s2">&amp;</span><span class="s1">line) {
-    </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">omit[
-            </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+      </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
         class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
-            </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
+          </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
         class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span class="s2">- </span><span class="s3">&quot;*/&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
-    ]; 
-    </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
-    </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
+  ]; 
+  </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
+  </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
  
-    </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">name, std</span><span class="s2">::</span><span
         class="s1">string</span><span class="s2">&gt;</span><span class="s1">{}
-                        </span><span class="s2">= </span><span class="s1">lexeme[</span><span class="s3">&quot;section &quot;</span><span
-        class="s1">] </span><span class="s2">&gt;&gt; </span><span class="s1">lexeme[</span><span class="s3">&quot;.data&quot;</span><span
-        class="s1">];
+                  </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.data&quot;</span><span class="s1">];
  
-    </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
-            iter_start, 
-            iter_end, 
-            skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
+  </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
+      iter_start, 
+      iter_end, 
+      skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
         class="s2">| </span><span class="s1">comment)
-    ); 
+  ); 
  
-    </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
+  </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
         class="s1">(iter_end </span><span class="s2">== </span><span class="s1">iter_start);
 } 
  
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span
         class="s1">isText(</span><span class="s2">const </span><span class="s1">string </span><span
         class="s2">&amp;</span><span class="s1">line) {
-    </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">omit[
-            </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+      </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
         class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
-            </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
+          </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
         class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span class="s2">- </span><span class="s3">&quot;*/&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
-    ]; 
-    </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
-    </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
+  ]; 
+  </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
+  </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
  
-    </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">name, std</span><span class="s2">::</span><span
         class="s1">string</span><span class="s2">&gt;</span><span class="s1">{}
-                        </span><span class="s2">= </span><span class="s1">lexeme[</span><span class="s3">&quot;section &quot;</span><span
-        class="s1">] </span><span class="s2">&gt;&gt; </span><span class="s1">lexeme[</span><span class="s3">&quot;.text&quot;</span><span
-        class="s1">];
+                  </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.text&quot;</span><span class="s1">];
  
-    </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
-            iter_start, 
-            iter_end, 
-            skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
+  </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
+      iter_start, 
+      iter_end, 
+      skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
         class="s2">| </span><span class="s1">comment)
-    ); 
+  ); 
  
-    </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
+  </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
         class="s1">(iter_end </span><span class="s2">== </span><span class="s1">iter_start);
 } 
  
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span
         class="s1">isStart(</span><span class="s2">const </span><span class="s1">string </span><span
         class="s2">&amp;</span><span class="s1">line) {
-    </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">omit[
-            </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+      </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
         class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
-            </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
+          </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
         class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span class="s2">- </span><span class="s3">&quot;*/&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
-    ]; 
-    </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
-    </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
+  ]; 
+  </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
+  </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
  
-    </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">data </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">name, std</span><span class="s2">::</span><span
         class="s1">string</span><span class="s2">&gt;</span><span class="s1">{}
-                        </span><span class="s2">= </span><span class="s1">lexeme[</span><span class="s3">&quot;section &quot;</span><span
-        class="s1">] </span><span class="s2">&gt;&gt; </span><span class="s1">lexeme[</span><span class="s3">&quot;.start&quot;</span><span
-        class="s1">];
+                  </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.start&quot;</span><span class="s1">];
  
-    </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
-            iter_start, 
-            iter_end, 
-            skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
+  </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= </span><span class="s1">parse( 
+      iter_start, 
+      iter_end, 
+      skip(space)[data] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span
         class="s2">| </span><span class="s1">comment)
-    ); 
+  ); 
  
-    </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
+  </span><span class="s2">return </span><span class="s1">success </span><span class="s2">&amp;&amp; </span><span
         class="s1">(iter_end </span><span class="s2">== </span><span class="s1">iter_start);
 } 
  
- 
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">lineParser(</span><span
-        class="s2">const </span><span class="s1">string line) {
+        class="s2">const </span><span class="s1">string </span><span class="s2">&amp;</span><span class="s1">line) {
  
-    </span><span class="s0">// Define parser rules</span><span class="s1"> 
-    </span><span class="s2">auto </span><span class="s1">name </span><span class="s2">= </span><span
+  </span><span class="s0">// Define parser rules</span><span class="s1"> 
+  </span><span class="s2">auto </span><span class="s1">name </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">name, std</span><span class="s2">::</span><span
         class="s1">string</span><span class="s2">&gt;</span><span class="s1">{}
-                        </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;a-zA-Z&quot;</span><span
+                  </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;a-zA-Z&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; *</span><span class="s1">char_(</span><span class="s3">&quot;a-z_A-Z0-9&quot;</span><span
         class="s1">)];
  
-    </span><span class="s2">auto </span><span class="s1">bin_val </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">bin_val </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">bin_val, std</span><span class="s2">::</span><span class="s1">string</span><span
         class="s2">&gt;</span><span class="s1">{}
-                           </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;0x&quot;</span><span
+                     </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;0b&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; +</span><span class="s1">char_(</span><span class="s3">&quot;0-1&quot;</span><span
         class="s1">)];
  
-    </span><span class="s2">auto </span><span class="s1">hex_val </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">hex_val </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">rule</span><span
         class="s2">&lt;class </span><span class="s1">hex_val, std</span><span class="s2">::</span><span class="s1">string</span><span
         class="s2">&gt;</span><span class="s1">{}
-                           </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;0x&quot;</span><span
+                     </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span class="s3">&quot;0x&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; +</span><span class="s1">char_(</span><span class="s3">&quot;0-9A-F&quot;</span><span
         class="s1">)];
  
- 
-    </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
+  </span><span class="s2">auto </span><span class="s1">comment </span><span class="s2">= </span><span
         class="s1">x3</span><span class="s2">::</span><span class="s1">omit[
-            </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+      </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
         class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
-            </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
+          </span><span class="s2">| </span><span class="s3">&quot;/*&quot; </span><span
         class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span class="s2">- </span><span class="s3">&quot;*/&quot;</span><span
         class="s1">) </span><span class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
-    ]; 
+  ]; 
  
-    </span><span class="s0">//string iterators</span><span class="s1"> 
-    </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
-    </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
+  </span><span class="s0">//string iterators</span><span class="s1"> 
+  </span><span class="s2">auto </span><span class="s1">iter_start </span><span class="s2">= </span><span class="s1">line.begin(); 
+  </span><span class="s2">auto </span><span class="s1">iter_end </span><span class="s2">= </span><span class="s1">line.end(); 
  
-    instruction inst; 
+  instruction inst; 
  
-    </span><span class="s0">// Bind</span><span class="s1"> 
-    </span><span class="s2">auto </span><span class="s1">add </span><span class="s2">= </span><span
+  </span><span class="s0">// Bind</span><span class="s1"> 
+  </span><span class="s2">auto </span><span class="s1">add </span><span class="s2">= </span><span
         class="s1">[</span><span class="s2">&amp;</span><span class="s1">](</span><span
         class="s2">auto &amp;</span><span class="s1">ctx) { inst.add(_attr(ctx)); };
  
-    </span><span class="s2">bool </span><span class="s1">result </span><span class="s2">= </span><span class="s1">parse( 
-            iter_start, 
-            iter_end, 
-            skip(comment </span><span class="s2">| </span><span class="s1">space)[name[add] </span><span class="s2">&gt;&gt; *</span><span
-        class="s1">(name[add] </span><span class="s2">% </span><span class="s3">','</span><span
-        class="s1">)] </span><span class="s2">&gt;&gt; *</span><span class="s1">(space </span><span class="s2">| </span><span
-        class="s1">comment)
-    ); 
+  </span><span class="s2">bool </span><span class="s1">result </span><span class="s2">= </span><span class="s1">parse( 
+      iter_start, 
+      iter_end, 
+      skip(comment </span><span class="s2">| </span><span class="s1">space)[name[add] </span><span
+        class="s2">&gt;&gt; *</span><span class="s1">(name[add] </span><span class="s2">% </span><span
+        class="s3">','</span><span class="s1">)] </span><span class="s2">&gt;&gt; *</span><span
+        class="s1">(space </span><span class="s2">| </span><span class="s1">comment)
+  ); 
  
-    </span><span class="s0">//Testing</span><span class="s1"> 
+  </span><span class="s0">//Testing</span><span class="s1"> 
  
-    </span><span class="s2">if </span><span class="s1">(result </span><span class="s2">&amp;&amp; </span><span
-        class="s1">inst.size </span><span class="s2">&amp;&amp; </span><span
-        class="s1">opCodes.find(inst.opCode) </span><span class="s2">== </span><span
+  </span><span class="s2">if </span><span class="s1">(result </span><span class="s2">&amp;&amp; </span><span class="s1">inst.size </span><span
+        class="s2">&amp;&amp; </span><span class="s1">opCodes.find(inst.opCode) </span><span class="s2">== </span><span
         class="s1">opCodes.end()) {    </span><span class="s0">// given identifier is not valid opCode</span><span
         class="s1">
-        result </span><span class="s2">= false</span><span class="s1">; 
+    result </span><span class="s2">= false</span><span class="s1">; 
  
-        errors.emplace_back( 
-                error(cur_line, 
-                      iter_end </span><span class="s2">- </span><span class="s1">iter_start, 
-                      </span><span class="s3">&quot;Syntax Error&quot;</span><span class="s1">, 
-                      inst.opCode </span><span class="s2">+ </span><span
+    errors.emplace_back( 
+        error(cur_line, 
+              iter_end </span><span class="s2">- </span><span class="s1">iter_start, 
+              </span><span class="s3">&quot;Syntax Error&quot;</span><span class="s1">, 
+              inst.opCode </span><span class="s2">+ </span><span
         class="s3">&quot; is not a valid opcode.&quot;</span><span class="s1">,    </span><span class="s0">// Example: 42 is no a valid opcode</span><span
         class="s1">
-                      line 
-                ) 
-        ); 
-    } </span><span class="s2">else if </span><span class="s1">(result </span><span class="s2">&amp;&amp; </span><span
+              line 
+        ) 
+    ); 
+  } </span><span class="s2">else if </span><span class="s1">(result </span><span class="s2">&amp;&amp; </span><span
         class="s1">inst.size </span><span class="s2">!= </span><span class="s1">numOfArgs[inst.opCode]) {  </span><span
         class="s0">// Check if have right number of arguments</span><span class="s1">
  
-        result </span><span class="s2">= false</span><span class="s1">; 
+    result </span><span class="s2">= false</span><span class="s1">; 
  
-        errors.emplace_back( 
-                error(cur_line, 
-                      iter_start </span><span class="s2">- </span><span class="s1">line.begin(), 
-                      </span><span class="s3">&quot;Logic Error&quot;</span><span class="s1">, 
-                      inst.opCode </span><span class="s2">+ </span><span class="s3">&quot; expects &quot; </span><span
+    errors.emplace_back( 
+        error(cur_line, 
+              iter_start </span><span class="s2">- </span><span class="s1">line.begin(), 
+              </span><span class="s3">&quot;Logic Error&quot;</span><span class="s1">, 
+              inst.opCode </span><span class="s2">+ </span><span class="s3">&quot; expects &quot; </span><span
         class="s2">+ </span><span class="s1">to_string(numOfArgs[inst.opCode]) </span><span class="s2">+ </span><span
         class="s3">&quot; argument(s), got &quot; </span><span class="s2">+</span><span class="s1">
-                      to_string(inst.size) </span><span class="s2">+ </span><span class="s3">&quot;.&quot;</span><span
+                  to_string(inst.size) </span><span class="s2">+ </span><span class="s3">&quot;.&quot;</span><span
         class="s1">,    </span><span class="s0">// Example: ADD expects 3 arguments, got 4</span><span class="s1">
-                      line 
-                ) 
-        ); 
-    } 
+              line 
+        ) 
+    ); 
+  } 
  
-    </span><span class="s2">if </span><span class="s1">(iter_end </span><span class="s2">!= </span><span class="s1">iter_start) {   </span><span
+  </span><span class="s2">if </span><span class="s1">(iter_end </span><span class="s2">!= </span><span class="s1">iter_start) {   </span><span
         class="s0">// Create an error if parser</span><span class="s1">
  
-        result </span><span class="s2">= false</span><span class="s1">; 
+    result </span><span class="s2">= false</span><span class="s1">; 
  
-        errors.emplace_back( 
-                error(cur_line, 
-                      iter_start </span><span class="s2">- </span><span class="s1">line.begin(), 
-                      </span><span class="s3">&quot;Syntax Error&quot;</span><span class="s1">, 
-                      </span><span class="s3">&quot;Unexpected -&gt; &quot; </span><span class="s2">+ </span><span
-        class="s1">string(iter_start, iter_end),
-                      line 
-                ) 
-        ); 
-    } 
+    errors.emplace_back( 
+        error(cur_line, 
+              iter_start </span><span class="s2">- </span><span class="s1">line.begin(), 
+              </span><span class="s3">&quot;Syntax Error&quot;</span><span class="s1">, 
+              </span><span class="s3">&quot;Unexpected -&gt; &quot; </span><span class="s2">+ </span><span class="s1">string(iter_start, iter_end), 
+              line 
+        ) 
+    ); 
+  } 
  
-    </span><span class="s0">// Code used for debugging</span><span class="s1"> 
-    </span><span class="s2">if </span><span class="s1">(onDebug) { 
-        cout </span><span class="s2">&lt;&lt; </span><span class="s1">cur_line </span><span
-        class="s2">&lt;&lt; </span><span class="s3">&quot;: &quot; </span><span class="s2">&lt;&lt; </span><span
-        class="s1">inst.opCode </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;(&quot; </span><span
-        class="s2">&lt;&lt; </span><span class="s1">numOfArgs[inst.opCode] </span><span class="s2">&lt;&lt; </span><span
-        class="s3">&quot;)&quot; </span><span class="s2">&lt;&lt; </span><span class="s1">endl;
+  </span><span class="s0">// Code used for debugging</span><span class="s1"> 
+  </span><span class="s2">if </span><span class="s1">(onDebug) { 
+    cout </span><span class="s2">&lt;&lt; </span><span class="s1">cur_line </span><span class="s2">&lt;&lt; </span><span
+        class="s3">&quot;: &quot; </span><span class="s2">&lt;&lt; </span><span class="s1">inst.opCode </span><span
+        class="s2">&lt;&lt; </span><span class="s3">&quot;(&quot; </span><span class="s2">&lt;&lt; </span><span
+        class="s1">numOfArgs[inst.opCode] </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;)&quot; </span><span
+        class="s2">&lt;&lt; </span><span class="s1">endl;
  
-        </span><span class="s2">for </span><span class="s1">(</span><span class="s2">auto </span><span
+    </span><span class="s2">for </span><span class="s1">(</span><span class="s2">auto </span><span
         class="s1">i </span><span class="s2">: </span><span class="s1">inst.arguments)
-            cout </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;</span><span class="s4">\t</span><span
+      cout </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;</span><span class="s4">\t</span><span
         class="s3">-&gt;&quot; </span><span class="s2">&lt;&lt; </span><span class="s1">i </span><span class="s2">&lt;&lt; </span><span
         class="s1">std</span><span class="s2">::</span><span class="s1">endl;
  
-        </span><span class="s2">if </span><span class="s1">(</span><span class="s2">!</span><span class="s1">result) 
-            </span><span class="s2">for </span><span class="s1">(</span><span class="s2">auto </span><span
+    </span><span class="s2">if </span><span class="s1">(</span><span class="s2">!</span><span class="s1">result) 
+      </span><span class="s2">for </span><span class="s1">(</span><span class="s2">auto </span><span
         class="s1">e </span><span class="s2">: </span><span class="s1">errors)
-                cout </span><span class="s2">&lt;&lt; </span><span class="s1">e.get() </span><span
+        cout </span><span class="s2">&lt;&lt; </span><span class="s1">e.get() </span><span
         class="s2">&lt;&lt; </span><span class="s1">endl;
-    } 
+  } 
  
-    </span><span class="s0">//</span><span class="s1"> 
+  </span><span class="s0">//</span><span class="s1"> 
  
-    </span><span class="s2">if </span><span class="s1">(result) instructions.push_back(inst); 
-    </span><span class="s2">return </span><span class="s1">result; 
+  </span><span class="s2">if </span><span class="s1">(result) instructions.push_back(inst); 
+  </span><span class="s2">return </span><span class="s1">result; 
 } 
  
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span
         class="s1">parser(</span><span class="s2">const </span><span class="s1">string </span><span
         class="s2">&amp;</span><span class="s1">s) {
-    cur_line </span><span class="s2">= </span><span class="s4">0</span><span class="s1">; 
+  cur_line </span><span class="s2">= </span><span class="s4">0</span><span class="s1">; 
  
-    stringstream stream(s); 
-    string line; 
-    </span><span class="s2">while </span><span class="s1">(std</span><span class="s2">::</span><span class="s1">getline(stream, line)) { 
-        cur_line</span><span class="s2">++</span><span class="s1">; 
-        lineParser(line); 
-    } 
+  stringstream stream(s); 
+  string line; 
+  </span><span class="s2">while </span><span class="s1">(std</span><span class="s2">::</span><span class="s1">getline(stream, line)) { 
+    cur_line</span><span class="s2">++</span><span class="s1">; 
+    lineParser(line); 
+  } 
  
 } 
  
 </span><span class="s2">bool </span><span class="s1">Assembler</span><span class="s2">::</span><span class="s1">parser(ifstream </span><span
         class="s2">&amp;</span><span class="s1">fs) {
  
+  cur_line </span><span class="s2">= </span><span class="s4">0</span><span class="s1">; 
+  string line; 
+  </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= true</span><span class="s1">; 
  
-    cur_line </span><span class="s2">= </span><span class="s4">0</span><span class="s1">; 
-    string line; 
-    </span><span class="s2">bool </span><span class="s1">success </span><span class="s2">= true</span><span class="s1">; 
+  </span><span class="s2">while </span><span class="s1">(std</span><span class="s2">::</span><span class="s1">getline(fs, line)) { 
  
-    </span><span class="s2">while </span><span class="s1">(std</span><span class="s2">::</span><span class="s1">getline(fs, line)) { 
+    cur_line</span><span class="s2">++</span><span class="s1">; 
  
-        cur_line</span><span class="s2">++</span><span class="s1">; 
+    </span><span class="s2">if </span><span class="s1">(isEmptyLine(line)) </span><span class="s2">continue</span><span
+        class="s1">;      </span><span class="s0">//skip empty lines</span><span class="s1">
  
-        </span><span class="s2">if </span><span class="s1">(isEmptyLine(line)) </span><span
-        class="s2">continue</span><span class="s1">;      </span><span class="s0">//skip empty lines</span><span
-        class="s1">
- 
-        </span><span class="s2">if </span><span class="s1">(isData(line)) { 
-            </span><span class="s2">continue</span><span class="s1">; 
-        } 
-        </span><span class="s2">if </span><span class="s1">(isText(line)) { 
-            </span><span class="s2">continue</span><span class="s1">; 
-        } 
-        </span><span class="s2">if </span><span class="s1">(isStart(line)) { 
-            </span><span class="s2">continue</span><span class="s1">; 
-        } 
- 
- 
- 
-        success </span><span class="s2">=</span><span class="s1"> 
-                lineParser(line) 
-                </span><span class="s2">&amp;&amp; </span><span class="s1">success; 
- 
+    </span><span class="s2">if </span><span class="s1">(isData(line)) { 
+      </span><span class="s2">continue</span><span class="s1">; 
     } 
-} 
+    </span><span class="s2">if </span><span class="s1">(isText(line)) { 
+      </span><span class="s2">continue</span><span class="s1">; 
+    } 
+    </span><span class="s2">if </span><span class="s1">(isStart(line)) { 
+      </span><span class="s2">continue</span><span class="s1">; 
+    } 
  
+    success </span><span class="s2">=</span><span class="s1"> 
+        lineParser(line) 
+            </span><span class="s2">&amp;&amp; </span><span class="s1">success; 
+ 
+  } 
+} 
  
 } </span><span class="s0">//End of asmbl namesapce</span></pre>
 </body>

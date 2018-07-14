@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(untitled)
+project(assembler)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -17,4 +17,4 @@ if(Boost_FOUND)
 endif()
 
 
-add_executable(untitled main.cpp assembler.cpp assembler.hpp)
+add_executable(assembler main.cpp assembler.cpp assembler.hpp)
