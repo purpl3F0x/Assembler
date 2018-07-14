@@ -97,10 +97,6 @@ class Assembler {
     string type;
     string name;
     string value;
-
-    void setType(string &t) { type = t; }
-    void setName(string &n) { name = n; }
-    void setVal(string &v) { value = v; }
   };
 
   struct error {

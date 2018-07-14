@@ -287,11 +287,10 @@ bool Assembler::dataParser(const string &line) {
 
   auto hex_val = x3::rule<class hex_val, std::string>{}
                      = lexeme[char_("0x") >> +char_("0-9A-F")];
-  auto str = x3::rule<class str, std::string>{}
-                 = '\"' >> lexeme[char_] >> '\"';
 
-  auto types = x3::rule<class types, std::string>{}
-                   = lexeme["int"] | lexeme["bool"] | lexeme["char"] | lexeme["float"];
+  auto str = x3::rule<class str, std::string>{}
+                 = lexeme[char_("\"") >> *(char_ - '\"') >> char_("\"")];
+
 
   auto value = x3::rule<class declaration, std::string>{}
                    = lexeme[+char_("0-9")] | lexeme[bin_val] | lexeme[hex_val] | str
@@ -302,6 +301,8 @@ bool Assembler::dataParser(const string &line) {
           | "/*" >> *(char_ - "*/") >> "*/"
   ];
 
+  vector<string> types = {"int", "bool", "string", "float"};
+
   //string iterators
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -309,22 +310,31 @@ bool Assembler::dataParser(const string &line) {
 
   // Bind
   data_type d;
-  auto setName = [&](auto &ctx) { d.setName(_attr(ctx)); };
-  auto setType = [&](auto &ctx) { d.setType(_attr(ctx)); };
-  auto setVal = [&](auto &ctx) { d.setVal(_attr(ctx)); };
+  auto setType = [&](auto &ctx) { d.type = _attr(ctx); };
+  auto setName = [&](auto &ctx) { d.name = _attr(ctx); };
+  auto setVal = [&](auto &ctx) { d.value = _attr(ctx); };
 
   bool result = parse(
       iter_start,
       iter_end,
-      skip(comment | space)[types[setType]]
-          >> space
-          >> skip(comment | space)[name[setName]]
-          >> space
-          >> skip(comment | space)[value[setVal]]
+      skip(comment | space)[name[setType]
+          >> name[setName]
+          >> value[setVal]]
           >> *(space | comment)
   );
 
-  cout << d.type << " " << d.name << " " << d.value << endl;
+  if (d.name=="" || d.value=="" || d.type=="") {             // Check if data type exists
+
+  } else if (!(find(types.begin(), types.end(), d.type)
+      || opCodes.find(d.name)==opCodes.end()) {     // Valid identifier
+
+  } else if (find(types.begin(), types.end(), d.name)) {
+
+  } else {
+    if
+  }
+
+  cout << d.type << ":" << d.name << "\n\t->" << d.value << endl;
 
   return true;
 

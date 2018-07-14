@@ -1,7 +1,9 @@
 section .data
+bool st true
+
+int i "test"
 
 section .text
-
 
 section .start
 //this is a comment that has no purpose !!! :P
