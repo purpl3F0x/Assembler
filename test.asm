@@ -1,7 +1,7 @@
 section .data
-bool st true
+bool st "d"
 
-int i "test"
+in5t i 9
 
 section .text
 
