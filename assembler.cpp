@@ -195,14 +195,10 @@ Assembler::error::error(int line, int index, string type = "", string message = 
 }
 
 const string Assembler::error::get() {
-  return type + " on line :" + to_string(line) + ":" + to_string(index) + "\t" + message;
+  return type + " on line " + to_string(line) + ":" + to_string(index) + "\t" + message;
 }
 
 bool Assembler::isEmptyLine(const string &line) {
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
 
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -210,7 +206,7 @@ bool Assembler::isEmptyLine(const string &line) {
   bool success = phrase_parse(
       iter_start,
       iter_end,
-      *comment,
+      *rules::comment,
       space
   );
 
@@ -218,95 +214,55 @@ bool Assembler::isEmptyLine(const string &line) {
 }
 
 bool Assembler::isData(const string &line) {
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
+
   auto iter_start = line.begin();
   auto iter_end = line.end();
-
-  auto data = x3::rule<class name, std::string>{}
-                  = lexeme["section "] >> lexeme[".data"];
 
   bool success = parse(
       iter_start,
       iter_end,
-      skip(space)[data] >> *(space | comment)
+      skip(space)[rules::data] >> *(space | rules::comment)
   );
 
   return success && (iter_end==iter_start);
 }
 
 bool Assembler::isText(const string &line) {
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
+
   auto iter_start = line.begin();
   auto iter_end = line.end();
-
-  auto data = x3::rule<class name, std::string>{}
-                  = lexeme["section "] >> lexeme[".text"];
 
   bool success = parse(
       iter_start,
       iter_end,
-      skip(space)[data] >> *(space | comment)
+      skip(space)[rules::text] >> *(space | rules::comment)
   );
 
   return success && (iter_end==iter_start);
 }
 
 bool Assembler::isStart(const string &line) {
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
+
   auto iter_start = line.begin();
   auto iter_end = line.end();
 
-  auto data = x3::rule<class name, std::string>{}
-                  = lexeme["section "] >> lexeme[".start"];
 
   bool success = parse(
       iter_start,
       iter_end,
-      skip(space)[data] >> *(space | comment)
+      skip(space)[rules::start] >> *(space | rules::comment)
   );
 
   return success && (iter_end==iter_start);
 }
 
-bool Assembler::dataParser(const string &line) {
-
-  auto name = x3::rule<class name, std::string>{}
-                  = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
-
-  auto bin_val = x3::rule<class bin_val, std::string>{}
-                     = lexeme[char_("0b") >> +char_("0-1")];
-
-  auto hex_val = x3::rule<class hex_val, std::string>{}
-                     = lexeme[char_("0x") >> +char_("0-9A-F")];
-
-  auto str = x3::rule<class str, std::string>{}
-                 = lexeme[char_("\"") >> *(char_ - '\"') >> char_("\"")];
-
-
-  auto value = x3::rule<class declaration, std::string>{}
-                   = lexeme[+char_("0-9")] | lexeme[bin_val] | lexeme[hex_val] | str
-          | lexeme[+char_("0-9")] >> *("." >> +char_("0-9")) | lexeme["true"] | lexeme["false"];
-
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
+bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
 
   vector<string> types = {"int", "bool", "string", "float"};
 
   //string iterators
   auto iter_start = line.begin();
   auto iter_end = line.end();
-
 
   // Bind
   data_type d;
@@ -317,45 +273,61 @@ bool Assembler::dataParser(const string &line) {
   bool result = parse(
       iter_start,
       iter_end,
-      skip(comment | space)[name[setType]
-          >> name[setName]
-          >> value[setVal]]
-          >> *(space | comment)
+      skip(rules::comment | space)[rules::name[setType]
+          >> rules::name[setName]
+          >> -rules::value[setVal]]
+          >> *(space | rules::comment)
   );
 
-  if (d.name=="" || d.value=="" || d.type=="") {             // Check if data type exists
+  if (result && iter_end!=iter_start) {
+    result = false;
+    errors.emplace_back(
+        error(
+            cur_line,
+            iter_start - line.begin(),
+            "Logic Error",
+            "Unexpected -> " + string(iter_start, iter_end),
+            line
+        )
+    );
+  } else if (d.type=="int") {
 
-  } else if (!(find(types.begin(), types.end(), d.type)
-      || opCodes.find(d.name)==opCodes.end()) {     // Valid identifier
+  } else if (d.type=="bool") {
 
-  } else if (find(types.begin(), types.end(), d.name)) {
+  } else if (d.type=="string") {
 
+  } else if (d.type=="float") {
+
+  } else if (opCodes.find(d.name)!=opCodes.end() || find(types.begin(), types.end(), d.name)!=types.end()) {
+    errors.emplace_back(
+        error(
+            cur_line,
+            line.find(d.name),
+            "Logic Error",
+            d.name + " is not a valid identifier",
+            line
+        )
+    );
   } else {
-    if
+    errors.emplace_back(
+        error(
+            cur_line,
+            iter_start - line.begin(),
+            "Syntax Error",
+            d.type + " does not name a type",
+            line
+        )
+    );
+    result = false;
   }
 
-  cout << d.type << ":" << d.name << "\n\t->" << d.value << endl;
+  if (onDebug) cout << d.type << ": " << d.name << "\n\t->" << d.value << endl;
 
-  return true;
+  return result;
 
 }
 
 bool Assembler::lineParser(const string &line) {
-
-  // Define parser rules
-  auto name = x3::rule<class name, std::string>{}
-                  = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
-
-  auto bin_val = x3::rule<class bin_val, std::string>{}
-                     = lexeme[char_("0b") >> +char_("0-1")];
-
-  auto hex_val = x3::rule<class hex_val, std::string>{}
-                     = lexeme[char_("0x") >> +char_("0-9A-F")];
-
-  auto comment = x3::omit[
-      "//" >> *(char_ - eol)
-          | "/*" >> *(char_ - "*/") >> "*/"
-  ];
 
   //string iterators
   auto iter_start = line.begin();
@@ -369,7 +341,7 @@ bool Assembler::lineParser(const string &line) {
   bool result = parse(
       iter_start,
       iter_end,
-      skip(comment | space)[name[add] >> *(name[add]%',')] >> *(space | comment)
+      skip(rules::comment | space)[rules::name[add] >> *(rules::name[add]%',')] >> *(space | rules::comment)
   );
 
   //Testing
@@ -420,19 +392,14 @@ bool Assembler::lineParser(const string &line) {
 
     for (auto i : inst.arguments)
       cout << "\t->" << i << std::endl;
-
-    if (!result)
-      for (auto e : errors)
-        cout << e.get() << endl;
   }
-
-  //
 
   if (result) instructions.push_back(inst);
   return result;
 }
 
 bool Assembler::parser(const string &s) {
+
   cur_line = 0;
 
   stringstream stream(s);
@@ -509,11 +476,10 @@ bool Assembler::parser(ifstream &fs) {
       success = lineParser(line) && success;
 
     else if (parseText)
-      continue;
-      //success = textParser(line) && success;
+      success = data_typeParser(line, text) && success;
 
     else if (parseData)
-      success = dataParser(line) && success;
+      success = data_typeParser(line, data) && success;
 
     else {
       errors.emplace_back(                      //throw error for instructions/declerations outside of sections
@@ -528,6 +494,12 @@ bool Assembler::parser(ifstream &fs) {
     }
 
   } //end of while loop
+
+  if (!success && onDebug)
+    for (auto e : errors)
+      cout << e.get() << endl;
+
+
   return success;
 }
 

@@ -1,22 +1,21 @@
-#include <iostream>
+/*  assembler.cpp
+ *
+ *  Created by Stavros Avramidis on 7/1/18.
+*/
 
+#include <iostream>
 
 #include "assembler.hpp"
 
-
-
-
 int main() {
-    using namespace asmbl;
+  using namespace asmbl;
 
-    Assembler a(true);
+  Assembler a(true);
 
-    a.setInputFile("test.asm");
-    bool result = a.parseFile();
+  a.setInputFile("test.asm");
+  bool result = a.parseFile();
 
+  cout << boolalpha << result << endl;
 
-    cout << boolalpha << result << endl;
-
-
-    return 0;
+  return 0;
 }

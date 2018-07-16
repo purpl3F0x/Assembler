@@ -2,7 +2,7 @@
  *
  * /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  * --------------------------------------------------------
- * This project contains an Assembler I made in c++
+ * This project contains an Assembler I made in C++
  * for a project I am  making, by re-inventing the wheel,
  * and creating a 16-bit computer on an FPGA
  * --------------------------------------------------------
@@ -14,9 +14,11 @@
 #ifndef ASSEMBLER_HPP
 #define ASSEMBLER_HPP
 
+// Boost libs
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 
+// STL libs (Yeah I know that redundant)
 #include <algorithm>
 #include <bitset>
 #include <fstream>
@@ -27,6 +29,70 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+namespace rules {
+using namespace std;    /*Please fix this ,just don't do it*/
+
+namespace x3 = boost::spirit::x3;
+namespace ascii = boost::spirit::x3::ascii;
+
+using x3::_attr;
+using x3::char_;
+using x3::double_;
+using x3::eol;
+using x3::int_;
+using x3::lexeme;
+using x3::lit;
+using x3::parse;
+using x3::phrase_parse;
+using x3::skip;
+
+using ascii::space;
+
+auto const name = x3::rule<class name, std::string>{}
+                      = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
+
+/*-------------------------------------------*/
+/*--------------Section Parser---------------*/
+
+auto const data = x3::rule<class data, std::string>{}
+                      = lexeme["section "] >> lexeme[".data"];
+
+auto const text = x3::rule<class text, std::string>{}
+                      = lexeme["section "] >> lexeme[".text"];
+
+auto const start = x3::rule<class start, std::string>{}
+                       = lexeme["section "] >> lexeme[".start"];
+
+/*-------------------------------------------*/
+/*-------------Data type parsers-------------*/
+
+auto const bin_val = x3::rule<class bin_val, std::string>{}
+                         = lexeme[char_("0b") >> +char_("0-1")];
+
+auto const hex_val = x3::rule<class hex_val, std::string>{}
+                         = lexeme[char_("0x") >> +char_("0-9a-fA-F")];
+
+auto const str = x3::rule<class str, std::string>{}
+                     = lexeme[char_("\'") >> *(ascii::char_ - '\'') >> char_("\'")];
+
+auto const value = x3::rule<class declaration, std::string>{}
+                       = +char_("0-9") | bin_val | hex_val
+        | str | lit("true") | lit("false");
+
+/*-------------------------------------------*/
+/*------------------Comment------------------*/
+
+auto const comment = x3::omit[
+    "//" >> *(char_ - eol)
+        | "/*" >> *(char_ - "*/") >> "*/"
+];
+
+/*-------------------------------------------*/
+/*---------------namespace asmbl-------------*/
+/*-------------------------------------------*/
+
+}
 
 namespace asmbl {
 
@@ -134,7 +200,7 @@ class Assembler {
 
   bool isStart(const string &line);
 
-  bool dataParser(const string &line);
+  bool data_typeParser(const string &line, map<string, short> &stack);
 
   bool textParser(const string &line);
 

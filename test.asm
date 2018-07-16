@@ -1,20 +1,25 @@
 section .data
-bool st "d"
 
-in5t i 9
+int a 1
+int b 0
+int c 0
 
 section .text
+// Nothing to see here
 
 section .start
-//this is a comment that has no purpose !!! :P
-ADD r1,r2,r2
-ADD r2,r1,r1        /*That's an in Multi-line  comment that can't be multi line*/
+/* Let's Calculate some fibonachy numbers*/
+MI a,r1
+MI b,r2
+MI c,r3
+
+ADD r1,r2,r3
+
 
 NOP //This is a comment
 
 FADD r1,r2,r3
 
-MI b123, e123
 
 //start ends
 
