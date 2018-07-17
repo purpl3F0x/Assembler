@@ -18,7 +18,7 @@
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 
-// STL libs (Yeah I know that redundant)
+// STL libs (Yeah I know that's redundant)
 #include <algorithm>
 #include <bitset>
 #include <fstream>
@@ -68,17 +68,21 @@ auto const start = x3::rule<class start, std::string>{}
 /*-------------Data type parsers-------------*/
 
 auto const bin_val = x3::rule<class bin_val, std::string>{}
-                         = lexeme[char_("0b") >> +char_("0-1")];
+                         = lexeme[lit("0b") >> +char_("0-1")];
 
 auto const hex_val = x3::rule<class hex_val, std::string>{}
-                         = lexeme[char_("0x") >> +char_("0-9a-fA-F")];
+                         = lexeme[char_("0") >> char_("x") >> +char_("0-9a-fA-F")];
 
-auto const str = x3::rule<class str, std::string>{}
+auto const chr = x3::rule<class str, std::string>{}
                      = lexeme[char_("\'") >> *(ascii::char_ - '\'') >> char_("\'")];
 
+auto const boolean = x3::rule<class boolean, std::string>{}
+                         = lexeme[lit("true") | lit("false")];
+
+//auto const floating
+
 auto const value = x3::rule<class declaration, std::string>{}
-                       = +char_("0-9") | bin_val | hex_val
-        | str | lit("true") | lit("false");
+                       = hex_val | bin_val | chr | (+char_("0-9")) | boolean;
 
 /*-------------------------------------------*/
 /*------------------Comment------------------*/
@@ -199,6 +203,8 @@ class Assembler {
   bool isText(const string &line);
 
   bool isStart(const string &line);
+
+  int to_int(std::string &s);
 
   bool data_typeParser(const string &line, map<string, short> &stack);
 

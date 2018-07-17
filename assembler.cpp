@@ -246,7 +246,6 @@ bool Assembler::isStart(const string &line) {
   auto iter_start = line.begin();
   auto iter_end = line.end();
 
-
   bool success = parse(
       iter_start,
       iter_end,
@@ -256,9 +255,33 @@ bool Assembler::isStart(const string &line) {
   return success && (iter_end==iter_start);
 }
 
+int Assembler::to_int(std::string &s) {
+  if (s.find("0b")==0) {                            // binary
+    return stoi(
+        std::string(s.begin() + 2, s.end()),
+        nullptr,
+        2
+    );
+  } else if (s.find("0x")==0) {                    // Hexadecimal
+    return stoi(
+        std::string(s.begin() + 2, s.end()),
+        nullptr,
+        16
+    );
+  } else if (s=="true") return true;
+
+  else if (s=="false") return false;
+
+  else if (s[0]=='\'') return s[1];
+
+  else return std::stoi(s);
+}
+
 bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
 
-  vector<string> types = {"int", "bool", "string", "float"};
+  vector<string> types = {"int", "bool", "char", "float"};
+
+  short int_val = 0;
 
   //string iterators
   auto iter_start = line.begin();
@@ -290,13 +313,9 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
             line
         )
     );
-  } else if (d.type=="int") {
+  } else if (d.type=="int" || d.type=="bool" || d.type=="char" || d.type=="float") {
 
-  } else if (d.type=="bool") {
-
-  } else if (d.type=="string") {
-
-  } else if (d.type=="float") {
+    int_val = to_int(d.value);
 
   } else if (opCodes.find(d.name)!=opCodes.end() || find(types.begin(), types.end(), d.name)!=types.end()) {
     errors.emplace_back(
@@ -321,7 +340,10 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
     result = false;
   }
 
-  if (onDebug) cout << d.type << ": " << d.name << "\n\t->" << d.value << endl;
+  if (onDebug) cout << d.type << ": " << d.name << "\n\t->" << d.value << " (" << int_val << ")" << endl;
+
+  if (result) stack[d.name] = int_val;
+
 
   return result;
 
@@ -343,8 +365,6 @@ bool Assembler::lineParser(const string &line) {
       iter_end,
       skip(rules::comment | space)[rules::name[add] >> *(rules::name[add]%',')] >> *(space | rules::comment)
   );
-
-  //Testing
 
   if (result && inst.size && opCodes.find(inst.opCode)==opCodes.end()) {    // given identifier is not valid opCode
     result = false;
@@ -409,7 +429,7 @@ bool Assembler::parser(const string &s) {
     lineParser(line);
   }
 
-}
+}   // I might fix this later, depreciated for now
 
 bool Assembler::parser(ifstream &fs) {
 
@@ -498,7 +518,6 @@ bool Assembler::parser(ifstream &fs) {
   if (!success && onDebug)
     for (auto e : errors)
       cout << e.get() << endl;
-
 
   return success;
 }
