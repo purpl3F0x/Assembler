@@ -5,21 +5,17 @@
 
 #include <iostream>
 
-// C libraries
-
 #include "assembler.hpp"
 
 int main() {
   using namespace asmbl;
 
-
   Assembler a(true);
-
-  a.setInputFile("bench.asm");
-
-  //Bench mark time
   clock_t t;
-  t = clock();
+
+  a.setInputFile("test.asm");
+
+  t = clock();    //Bench mark time
 
   bool result = a.parseFile();
 

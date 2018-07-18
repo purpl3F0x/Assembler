@@ -176,7 +176,29 @@ string tobinary(int n, int d = 16) {
   return s;
 }
 
-/* Privare Methods */
+bool Assembler::translate(string &outName = "") {
+  bool success = true;
+  int romAddressPointer = 0;
+  int ramAddressPointer = 0;
+
+  if (onDebug)
+
+    for (auto &i : text) {
+      bin_val[romAddressPointer++] = i.second;
+    }
+//
+//  for (auto& i : data){
+//    bin[romAddressPointer++] = opCode["MI"] << (16 -  OPCODE_SIZE) + () ];
+//  }
+
+  return success;
+
+}
+
+/*-------------------------------------------------- */
+/* ---------------- Privare Methods ---------------- */
+/*-------------------------------------------------- */
+
 Assembler::instruction::instruction() : size{-1} {}
 
 void Assembler::instruction::add(std::string s) {
@@ -279,8 +301,6 @@ int Assembler::to_int(std::string &s) {
 
 bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
 
-  vector<string> types = {"int", "bool", "char", "float"};
-
   short int_val = 0;
 
   //string iterators
@@ -317,7 +337,8 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
 
     int_val = to_int(d.value);
 
-  } else if (opCodes.find(d.name)!=opCodes.end() || find(types.begin(), types.end(), d.name)!=types.end()) {
+  } else if (opCodes.find(d.name)!=opCodes.end()
+      || find(rules::types.begin(), rules::types.end(), d.name)!=rules::types.end()) {
     errors.emplace_back(
         error(
             cur_line,
@@ -363,7 +384,9 @@ bool Assembler::lineParser(const string &line) {
   bool result = parse(
       iter_start,
       iter_end,
-      skip(rules::comment | space)[rules::name[add] >> *(rules::name[add]%',')] >> *(space | rules::comment)
+      skip(rules::comment | space)[rules::name[add]
+          >> *(rules::name[add]%',')]
+          >> *(space | rules::comment)
   );
 
   if (result && inst.size && opCodes.find(inst.opCode)==opCodes.end()) {    // given identifier is not valid opCode
@@ -373,11 +396,11 @@ bool Assembler::lineParser(const string &line) {
         error(cur_line,
               iter_end - iter_start,
               "Syntax Error",
-              inst.opCode + " is not a valid opcode.",    // Example: 42 is no a valid opcode
+              inst.opCode + " is not a valid opcode.",
               line
         )
     );
-  } else if (result && inst.size!=numOfArgs[inst.opCode]) {  // Check if have right number of arguments
+  } else if (result && inst.size!=numOfArgs[inst.opCode]) {                 // Check arguments number
 
     result = false;
 
@@ -392,7 +415,7 @@ bool Assembler::lineParser(const string &line) {
     );
   }
 
-  if (iter_end!=iter_start) {   // Create an error if parser
+  if (iter_end!=iter_start) {                                               // Create an error if parser
 
     result = false;
 
@@ -414,7 +437,9 @@ bool Assembler::lineParser(const string &line) {
       cout << "\t->" << i << std::endl;
   }
 
+  // Add instruction to stack
   if (result) instructions.push_back(inst);
+
   return result;
 }
 
@@ -478,7 +503,7 @@ bool Assembler::parser(ifstream &fs) {
     }
 
     if (isStart(line)) {
-      if (parseStart) {                          // Return Error if Already have parsed Start section
+      if (parseStart) {                           // Return Error if Already have parsed Start section
         errors.emplace_back(
             error(cur_line,
                   line.find('s'),                 // Find where section starts
@@ -502,7 +527,7 @@ bool Assembler::parser(ifstream &fs) {
       success = data_typeParser(line, data) && success;
 
     else {
-      errors.emplace_back(                      //throw error for instructions/declerations outside of sections
+      errors.emplace_back(                                //throw error for instructions/declerations outside of sections
           error(cur_line,
                 line.find('s'),
                 "Syntax Error",
@@ -513,11 +538,24 @@ bool Assembler::parser(ifstream &fs) {
       success = false;
     }
 
-  } //end of while loop
+  } //end of parse loop
+
+
+  if (success) text[".start"] = data.size();             // Move .start to pointer set memory values on start
 
   if (!success && onDebug)
     for (auto e : errors)
       cout << e.get() << endl;
+
+  if (onDebug) {                                          // Print Variables values onDebug mode
+    cout << "_______" << " data " << "_______" << endl;
+    for (auto &i:data)
+      cout << i.first << " : " << i.second << endl;
+
+    cout << "_______" << " text " << "_______" << endl;
+    for (auto &i:text)
+      cout << i.first << " : " << i.second << endl;
+  }
 
   return success;
 }

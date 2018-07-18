@@ -4,17 +4,18 @@
  * --------------------------------------------------------
  * This project contains an Assembler I made in C++
  * for a project I am  making, by re-inventing the wheel,
- * and creating a 16-bit computer on an FPGA
+ * and creating a 16-bit computer on an FPGA.
  * --------------------------------------------------------
  * \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
  *
- *  Created by Stavros Avramidis on 7/1/18.
+ *  Created by Stavros Avramidis on 7/1/18
+ *  Published under MIT License
 */
 
 #ifndef ASSEMBLER_HPP
 #define ASSEMBLER_HPP
 
-// Boost libs
+// Boost libs (tested on boost 1.64 & 1.65 revisions)
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 
@@ -30,7 +31,13 @@
 #include <string>
 #include <vector>
 
-namespace rules {
+#define SIZE 1<<16
+#define OPCODE_SIZE 7
+
+
+/*---------------namespace asmbl-------------*/
+
+namespace rules /* Define parser rules*/ {
 using namespace std;    /*Please fix this ,just don't do it*/
 
 namespace x3 = boost::spirit::x3;
@@ -48,6 +55,8 @@ using x3::phrase_parse;
 using x3::skip;
 
 using ascii::space;
+
+const vector<string> types = {"int", "bool", "char", "float"};
 
 auto const name = x3::rule<class name, std::string>{}
                       = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
@@ -92,11 +101,9 @@ auto const comment = x3::omit[
         | "/*" >> *(char_ - "*/") >> "*/"
 ];
 
-/*-------------------------------------------*/
-/*---------------namespace asmbl-------------*/
-/*-------------------------------------------*/
-
 }
+
+/*---------------namespace asmbl-------------*/
 
 namespace asmbl {
 
@@ -144,11 +151,9 @@ class Assembler {
     return parser(infile);
   }
 
-  void translate();
+  bool translate(string &outName = "");
 
   void printErrors();
-
-  friend string tobinary(int, int);
 
  private:
   struct instruction {
@@ -185,6 +190,8 @@ class Assembler {
   string cur_file;
   bool onDebug;
 
+  short bin_val[SIZE];
+
   // All maps provιde binary value of each type
   map<string, short> opCodes;       // List off all opCodes
   map<string, short> numOfArgs;     // Number of Arguments of each opCode
@@ -208,8 +215,6 @@ class Assembler {
 
   bool data_typeParser(const string &line, map<string, short> &stack);
 
-  bool textParser(const string &line);
-
   bool lineParser(const string &line);
 
   bool parser(const string &s);
@@ -220,4 +225,4 @@ class Assembler {
 
 }
 
-#endif //ASSEMBLER_H
+#endif // end of definition ASSEMBLER_H
