@@ -31,7 +31,8 @@
 #include <string>
 #include <vector>
 
-#define SIZE 1<<16
+#define SIZE 65536
+#define WORD 16
 #define OPCODE_SIZE 7
 
 
@@ -132,9 +133,9 @@ class Assembler {
  public:
   Assembler(bool mode);
 
-  int opCode(string s);
+  short opCode(string s);
 
-  int Register(string s);
+  short Register(string s);
 
   void setInputFile(string file);
 
@@ -151,9 +152,9 @@ class Assembler {
     return parser(infile);
   }
 
-  bool translate(string &outName = "");
+  bool translate(string outName = "");
 
-  void printErrors();
+  std::string getErrors() const;
 
  private:
   struct instruction {
@@ -190,7 +191,7 @@ class Assembler {
   string cur_file;
   bool onDebug;
 
-  short bin_val[SIZE];
+  std::vector<short> rom;
 
   // All maps provιde binary value of each type
   map<string, short> opCodes;       // List off all opCodes

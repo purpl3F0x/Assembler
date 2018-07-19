@@ -9,7 +9,7 @@ section .text
 
 section .start
 /* A multy line can't be multi line*/
-MI a,r1
+MI r1,r1
 ADD r1,r2,r3
 
 NOP //This is a comment

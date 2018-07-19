@@ -13,7 +13,7 @@ int main() {
   Assembler a(true);
   clock_t t;
 
-  a.setInputFile("test.asm");
+  a.setInputFile("bench.asm");
 
   t = clock();    //Bench mark time
 
@@ -22,6 +22,12 @@ int main() {
   t = clock() - t;
 
   cout << "File parsed in: " << t*1.0/CLOCKS_PER_SEC << " (s) and returned " << boolalpha << result << endl;
+
+  if (!result)
+    cout << a.getErrors();
+  else
+    a.translate();
+
 
   return 0;
 }

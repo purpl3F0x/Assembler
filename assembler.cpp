@@ -9,6 +9,8 @@ namespace asmbl {
 
 Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
+  rom.reserve(SIZE);
+
   //Basic operationns
   opCodes["NOP"] = 0b0000000;
   opCodes["RI"] = 0b0000001;
@@ -150,14 +152,14 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
 }
 
-int Assembler::opCode(string s) {
+short Assembler::opCode(string s) {
   auto it = opCodes.find(s);
 
   if (it!=opCodes.end()) return it->second;
   else throw logic_error("Got \" " + s + "\" expected an opcode");
 }
 
-int Assembler::Register(string s) {
+short Assembler::Register(string s) {
   auto it = reg.find(s);
   if (it!=reg.end()) return it->second;
   else throw logic_error(s + " is not a  register");
@@ -176,23 +178,80 @@ string tobinary(int n, int d = 16) {
   return s;
 }
 
-bool Assembler::translate(string &outName = "") {
-  bool success = true;
-  int romAddressPointer = 0;
-  int ramAddressPointer = 0;
+bool Assembler::translate(string outName) {
+  //get file name
+  if (outName=="") outName = cur_file.substr(0, cur_file.find_last_of(".")) + ".bin";
 
-  if (onDebug)
+  if (onDebug) cout << "Opening " << outName << " for writing ...";
 
-    for (auto &i : text) {
-      bin_val[romAddressPointer++] = i.second;
-    }
-//
+  //open file for writing
+  ofstream outfile;
+  outfile.open(outName, ios::binary | ios::out);
+
+  if (!outfile) {
+    cout << "Cannot Open File\n\n";
+    return false;
+  }
+
+  //Set All Vector values to zero
+  for (int i = 0; i < SIZE; i++)
+    rom.push_back(0);
+
+  int romAddressPointer = 1;
+  int ramAddressPointer = 1;
+//  /* HEY CLEVER ARE YOU INSTRESTED IN ADDING THE RAM CONFIGURATION
 //  for (auto& i : data){
 //    bin[romAddressPointer++] = opCode["MI"] << (16 -  OPCODE_SIZE) + () ];
 //  }
 
-  return success;
+  for (auto inst : instructions) {                                             // parse every instruction
+    int pos = 3;
+    std::vector<std::string>::iterator arg_it = inst.arguments.begin();
 
+    rom.at(romAddressPointer) = opCode(inst.opCode) << 9;
+
+    if (!inst.arguments.size()) continue;                                    // opCodes with no args
+
+    // Initialise Instructions taking 2 addresses lines
+    if (inst.opCode=="MI" || inst.opCode=="MO" || inst.opCode=="STA" || inst.opCode=="STA") {
+
+      for (arg_it; arg_it!=inst.arguments.end() - 1; arg_it++)            // loop though gives arguments
+        rom.at(romAddressPointer) += (Register(*arg_it) << pos--*3);
+
+      rom.at(++romAddressPointer) = Register(*arg_it);
+
+    } else {
+      for (auto arg_it : inst.arguments)
+        rom.at(romAddressPointer) += (Register(arg_it) << pos--*3);
+    }
+    romAddressPointer++;
+  }
+
+  for (auto &i : text) {                                                     // add text
+    rom.at(romAddressPointer++) = i.second;
+  }
+
+  for (auto adr : rom)
+    outfile.write(reinterpret_cast<const char *>(&adr), sizeof(uint16_t));
+
+  outfile.close();                                                           // Close file
+
+  if (onDebug) {
+    int row = 0;
+    for (auto adr : rom) {
+      cout << row++ << "\t";
+      cout << adr << endl;
+    }
+  }
+  return true;
+}
+
+std::string Assembler::getErrors() const {
+  std::string out = "";
+
+  for (auto e :errors) out.append(e.get());
+
+  return out;
 }
 
 /*-------------------------------------------------- */
