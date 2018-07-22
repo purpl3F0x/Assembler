@@ -182,7 +182,7 @@ bool Assembler::translate(string outName) {
   //get file name
   if (outName=="") outName = cur_file.substr(0, cur_file.find_last_of(".")) + ".bin";
 
-  if (onDebug) cout << "Opening " << outName << " for writing ...";
+  if (onDebug) cout << "Opening " << outName << " for writing ...\n";
 
   //open file for writing
   ofstream outfile;
@@ -199,23 +199,26 @@ bool Assembler::translate(string outName) {
 
   int romAddressPointer = 1;
   int ramAddressPointer = 1;
-//  /* HEY CLEVER ARE YOU INSTRESTED IN ADDING THE RAM CONFIGURATION
-//  for (auto& i : data){
-//    bin[romAddressPointer++] = opCode["MI"] << (16 -  OPCODE_SIZE) + () ];
-//  }
+
+  // Initialise memory at runtime
+  for (auto &i : data) {
+    rom[romAddressPointer++] = opCode("RI") << (WORD - OPCODE_SIZE);
+    rom[romAddressPointer++] = ramAddressPointer++;
+    rom[romAddressPointer++] = i.second;
+  }
 
   for (auto inst : instructions) {                                             // parse every instruction
     int pos = 3;
     std::vector<std::string>::iterator arg_it = inst.arguments.begin();
 
-    rom.at(romAddressPointer) = opCode(inst.opCode) << 9;
+    rom.at(romAddressPointer) = opCode(inst.opCode) << (WORD - OPCODE_SIZE);
 
     if (!inst.arguments.size()) continue;                                    // opCodes with no args
 
     // Initialise Instructions taking 2 addresses lines
     if (inst.opCode=="MI" || inst.opCode=="MO" || inst.opCode=="STA" || inst.opCode=="STA") {
 
-      for (arg_it; arg_it!=inst.arguments.end() - 1; arg_it++)            // loop though gives arguments
+      for (arg_it; arg_it!=inst.arguments.end() - 1; arg_it++)               // loop though gives arguments
         rom.at(romAddressPointer) += (Register(*arg_it) << pos--*3);
 
       rom.at(++romAddressPointer) = Register(*arg_it);
@@ -231,18 +234,12 @@ bool Assembler::translate(string outName) {
     rom.at(romAddressPointer++) = i.second;
   }
 
-  for (auto adr : rom)
+  for (auto adr : rom)                                                       // Write to file
     outfile.write(reinterpret_cast<const char *>(&adr), sizeof(uint16_t));
 
   outfile.close();                                                           // Close file
 
-  if (onDebug) {
-    int row = 0;
-    for (auto adr : rom) {
-      cout << row++ << "\t";
-      cout << adr << endl;
-    }
-  }
+
   return true;
 }
 
@@ -423,7 +420,6 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
   if (onDebug) cout << d.type << ": " << d.name << "\n\t->" << d.value << " (" << int_val << ")" << endl;
 
   if (result) stack[d.name] = int_val;
-
 
   return result;
 

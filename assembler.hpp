@@ -15,7 +15,7 @@
 #ifndef ASSEMBLER_HPP
 #define ASSEMBLER_HPP
 
-// Boost libs (tested on boost 1.64 & 1.65 revisions)
+// Boost libs
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 
@@ -38,7 +38,7 @@
 
 /*---------------namespace asmbl-------------*/
 
-namespace rules /* Define parser rules*/ {
+namespace rules {
 using namespace std;    /*Please fix this ,just don't do it*/
 
 namespace x3 = boost::spirit::x3;

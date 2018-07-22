@@ -10,23 +10,26 @@
 int main() {
   using namespace asmbl;
 
-  Assembler a(true);
+  Assembler a(false);
   clock_t t;
 
   a.setInputFile("bench.asm");
 
-  t = clock();    //Bench mark time
+  t = clock();    //Benchmark
 
   bool result = a.parseFile();
 
   t = clock() - t;
 
-  cout << "File parsed in: " << t*1.0/CLOCKS_PER_SEC << " (s) and returned " << boolalpha << result << endl;
+  cout << "File parsed in: " << t*1.0/CLOCKS_PER_SEC << (result ? " with success." : " and failed.") << endl;
 
   if (!result)
     cout << a.getErrors();
-  else
-    a.translate();
+  else {
+    t = clock();
+    result = a.translate();
+    cout << "Assembled in: " << t*1.0/CLOCKS_PER_SEC << (result ? " assembled successfully" : " build failed.") << endl;
+  }
 
 
   return 0;
