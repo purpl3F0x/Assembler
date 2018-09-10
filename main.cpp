@@ -7,14 +7,15 @@
 #include <iostream>
 
 #include "assembler.hpp"
+#include "disassembler.hpp"
 
 int main() {
   using namespace asmbl;
+  using namespace disasmbl;
 
   Assembler a(false);
-  clock_t t;
 
-  a.setInputFile("bench.asm");
+  a.setInputFile("test.asm");
 
   // Record start time
   auto start = std::chrono::high_resolution_clock::now();
@@ -40,6 +41,14 @@ int main() {
     elapsed = finish - start;
     cout << "Assembled in: " << elapsed.count() << (result ? " assembled successfully" : " build failed.") << endl;
   }
+
+  // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+  disassembler d("test.bin");
+
+  bool res = d.disassemble();
+
+  // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
 
   return 0;

@@ -152,25 +152,42 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
 }
 
-short Assembler::opCode(string s) {
+short Assembler::opCode(std::string s) {
   auto it = opCodes.find(s);
 
   if (it!=opCodes.end()) return it->second;
-  else throw logic_error("Got \" " + s + "\" expected an opcode");
+  else throw std::logic_error("Got \" " + s + "\" expected an opcode");
 }
 
-short Assembler::Register(string s) {
+short Assembler::Register(std::string s) {
   auto it = reg.find(s);
   if (it!=reg.end()) return it->second;
-  else throw logic_error(s + " is not a  register");
+  else throw std::logic_error(s + " is not a  register");
 }
 
-void Assembler::setInputFile(string infile) {
+void Assembler::setInputFile(std::string infile) {
   cur_file = infile;
 }
 
-string tobinary(int n, int d = 16) {
-  string s;
+bool Assembler::parseFile() {
+  ifstream infile;
+  infile.open(cur_file);
+
+  if (onDebug) {
+    cout << "Opening " << cur_file << " ..." << endl;
+    if (infile) cout << "Ok\n\n";
+    else {
+      cout << "Cannot Open File\n\n";
+    }
+  }
+
+  if (!infile) return 0;
+
+  return parser(infile);
+}
+
+std::string tobinary(int n, int d = 16) {
+  std::string s;
   while (d--) {
     s = std::to_string(n%2) + s;
     n = n >> 1;
@@ -178,9 +195,12 @@ string tobinary(int n, int d = 16) {
   return s;
 }
 
-bool Assembler::translate(string outName) {
+bool Assembler::translate(std::string outName) {
   //get file name
-  if (outName=="") outName = cur_file.substr(0, cur_file.find_last_of(".")) + ".bin";
+  if (outName=="")
+    outName =
+        cur_file.substr(0, cur_file.find_last_of("."))
+            + ".bin";
 
   if (onDebug) cout << "Opening " << outName << " for writing ...\n";
 
@@ -201,12 +221,18 @@ bool Assembler::translate(string outName) {
   int ramAddressPointer = 1;
 
   // Initialise memory at runtime
-  for (auto &i : data) {
+  for (auto &d : data) {
+    /* Assembles a RI routine for to fill RAM with pre-compliled values
+     *
+     * RI 2 args (16-bit) -> 3 ROM addresses -> 3 clk cycles
+     * */
     rom[romAddressPointer++] = opCode("RI") << (WORD - OPCODE_SIZE);
     rom[romAddressPointer++] = ramAddressPointer++;
-    rom[romAddressPointer++] = i.second;
+    rom[romAddressPointer++] = d.second;
   }
 
+
+  // Instructions
   for (auto inst : instructions) {                                             // parse every instruction
     int pos = 3;
     std::vector<std::string>::iterator arg_it = inst.arguments.begin();
@@ -268,15 +294,18 @@ void Assembler::instruction::add(vector<std::string> &v) {
   size += v.size();
 }
 
-Assembler::error::error(int line, int index, string type = "", string message = "", string line_text = "")
-    : line{line}, index{index}, type{type}, message{message}, line_text{line_text} {
-}
+Assembler::error::error(int line,
+                        int index,
+                        std::string type = "",
+                        std::string message = "",
+                        std::string line_text = ""
+) : line{line}, index{index}, type{type}, message{message}, line_text{line_text} {}
 
-const string Assembler::error::get() {
+const std::string Assembler::error::get() {
   return type + " on line " + to_string(line) + ":" + to_string(index) + "\t" + message;
 }
 
-bool Assembler::isEmptyLine(const string &line) {
+bool Assembler::isEmptyLine(const std::string &line) {
 
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -291,7 +320,7 @@ bool Assembler::isEmptyLine(const string &line) {
   return success && (iter_end==iter_start);
 }
 
-bool Assembler::isData(const string &line) {
+bool Assembler::isData(const std::string &line) {
 
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -305,7 +334,7 @@ bool Assembler::isData(const string &line) {
   return success && (iter_end==iter_start);
 }
 
-bool Assembler::isText(const string &line) {
+bool Assembler::isText(const std::string &line) {
 
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -319,7 +348,7 @@ bool Assembler::isText(const string &line) {
   return success && (iter_end==iter_start);
 }
 
-bool Assembler::isStart(const string &line) {
+bool Assembler::isStart(const std::string &line) {
 
   auto iter_start = line.begin();
   auto iter_end = line.end();
@@ -355,7 +384,7 @@ int Assembler::to_int(std::string &s) {
   else return std::stoi(s);
 }
 
-bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
+bool Assembler::data_typeParser(const std::string &line, map<std::string, short> &stack) {
 
   short int_val = 0;
 
@@ -385,7 +414,7 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
             cur_line,
             iter_start - line.begin(),
             "Logic Error",
-            "Unexpected -> " + string(iter_start, iter_end),
+            "Unexpected -> " + std::string(iter_start, iter_end),
             line
         )
     );
@@ -425,7 +454,7 @@ bool Assembler::data_typeParser(const string &line, map<string, short> &stack) {
 
 }
 
-bool Assembler::lineParser(const string &line) {
+bool Assembler::lineParser(const std::string &line) {
 
   //string iterators
   auto iter_start = line.begin();
@@ -478,7 +507,7 @@ bool Assembler::lineParser(const string &line) {
         error(cur_line,
               iter_start - line.begin(),
               "Syntax Error",
-              "Unexpected -> " + string(iter_start, iter_end),
+              "Unexpected -> " + std::string(iter_start, iter_end),
               line
         )
     );
@@ -498,12 +527,12 @@ bool Assembler::lineParser(const string &line) {
   return result;
 }
 
-bool Assembler::parser(const string &s) {
+bool Assembler::parser(const std::string &s) {
 
   cur_line = 0;
 
   stringstream stream(s);
-  string line;
+  std::string line;
   while (std::getline(stream, line)) {
     cur_line++;
     lineParser(line);
@@ -518,7 +547,7 @@ bool Assembler::parser(ifstream &fs) {
   bool parseStart = false;
 
   cur_line = 0;
-  string line;
+  std::string line;
   bool success = true;
 
   while (std::getline(fs, line)) {

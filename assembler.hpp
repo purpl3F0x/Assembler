@@ -36,13 +36,15 @@
 #define OPCODE_SIZE 7
 
 
-/*---------------namespace asmbl-------------*/
+/*---------------namespace rules-------------*/
 
 namespace rules {
-using namespace std;    /*Please fix this ,just don't do it*/
 
 namespace x3 = boost::spirit::x3;
 namespace ascii = boost::spirit::x3::ascii;
+
+
+using std::vector;
 
 using x3::_attr;
 using x3::char_;
@@ -57,7 +59,7 @@ using x3::skip;
 
 using ascii::space;
 
-const vector<string> types = {"int", "bool", "char", "float"};
+const vector<std::string> types = {"int", "bool", "char", "float"};
 
 auto const name = x3::rule<class name, std::string>{}
                       = lexeme[char_("a-zA-Z") >> *char_("a-z_A-Z0-9")];
@@ -108,10 +110,18 @@ auto const comment = x3::omit[
 
 namespace asmbl {
 
-using namespace std;
-
 namespace x3 = boost::spirit::x3;
 namespace ascii = boost::spirit::x3::ascii;
+
+using std::cout;
+using std::endl;
+using std::ifstream;
+using std::ios;
+using std::map;
+using std::ofstream;
+using std::stringstream;
+using std::to_string;
+using std::vector;
 
 using x3::_attr;
 using x3::alnum;
@@ -133,92 +143,83 @@ class Assembler {
  public:
   Assembler(bool mode);
 
-  short opCode(string s);
+  short opCode(std::string s);
 
-  short Register(string s);
+  short Register(std::string s);
 
-  void setInputFile(string file);
+  void setInputFile(std::string file);
 
-  bool parseString(const string &s) { return parser(s); }
+  bool parseString(const std::string &s) { return parser(s); }
 
-  bool parseFile() {
-    ifstream infile;
-    infile.open(cur_file);
-    if (onDebug) {
-      cout << "Opening " << cur_file << " ..." << endl;
-      if (infile) cout << "Ok\n\n";
-      else cout << "Cannot Open File\n\n";
-    }
-    return parser(infile);
-  }
+  bool parseFile();
 
-  bool translate(string outName = "");
+  bool translate(std::string outName = "");
 
   std::string getErrors() const;
 
  private:
   struct instruction {
-    string opCode;
-    vector<string> arguments;
+    std::string opCode;
+    vector<std::string> arguments;
     int size;
 
     instruction();
 
-    void add(string s);
+    void add(std::string s);
 
     void add(vector<std::string> &v);
   };
 
   struct data_type {
-    string type;
-    string name;
-    string value;
+    std::string type;
+    std::string name;
+    std::string value;
   };
 
   struct error {
     int line;
     int index;
-    string type;
-    string message;
-    string line_text;
+    std::string type;
+    std::string message;
+    std::string line_text;
 
-    error(int line, int index, string type, string message, string line_text);
+    error(int line, int index, std::string type, std::string message, std::string line_text);
 
-    const string get();
+    const std::string get();
   };
 
   int cur_line;
-  string cur_file;
+  std::string cur_file;
   bool onDebug;
 
   std::vector<short> rom;
 
   // All maps provιde binary value of each type
-  map<string, short> opCodes;       // List off all opCodes
-  map<string, short> numOfArgs;     // Number of Arguments of each opCode
-  map<string, short> reg;           // Registers
-  map<string, short> data;          // Variable Stack
-  map<string, short> text;          // Const Stack
+  map<std::string, short> opCodes;       // List off all opCodes
+  map<std::string, short> numOfArgs;     // Number of Arguments of each opCode
+  map<std::string, short> reg;           // Registers
+  map<std::string, short> data;          // Variable Stack
+  map<std::string, short> text;          // Const Stack
 
   vector<instruction> instructions;
   vector<error> errors;
-  vector<string> out;
+  vector<std::string> out;
 
-  bool isEmptyLine(const string &line);
+  bool isEmptyLine(const std::string &line);
 
-  bool isData(const string &line);
+  bool isData(const std::string &line);
 
-  bool isText(const string &line);
+  bool isText(const std::string &line);
 
-  bool isStart(const string &line);
+  bool isStart(const std::string &line);
 
   int to_int(std::string &s);
 
-  bool data_typeParser(const string &line, map<string, short> &stack);
+  bool data_typeParser(const std::string &line, map<std::string, short> &stack);
 
-  bool lineParser(const string &line);
+  bool lineParser(const std::string &line);
 
-  bool parser(const string &s);
+  bool parser(const std::string &s);
 
   bool parser(ifstream &fs);
 

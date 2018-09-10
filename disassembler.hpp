@@ -32,13 +32,29 @@
 // Project header files
 #include "assembler.hpp"
 
-#define SIZE 1<<16
-#define WORD 16
-#define OPCODE_SIZE 7
+namespace disasmbl {
 
-class disassembler()
-{
+using std::cout;
+using std::endl;
+using std::ifstream;
+using std::vector;
+using std::ios;
 
-}
+class disassembler {
+ public:
+  disassembler();
+  disassembler(std::string infile);
+
+  void setFile(std::string infile);
+
+  bool disassemble(bool silent = true);
+
+ private:
+  vector<short> instructions;
+  std::string infile;
+
+};
+
+} // end of disasmbl namsespace
 
 #endif //ASSEMBLER_DISASSEMBLER_HPP
