@@ -8,22 +8,25 @@
 
 #include "assembler.hpp"
 #include "disassembler.hpp"
+#include "opcodes.hpp"
 
 int main() {
   using namespace asmbl;
   using namespace disasmbl;
+
+  using std::chrono::high_resolution_clock;
 
   Assembler a(false);
 
   a.setInputFile("test.asm");
 
   // Record start time
-  auto start = std::chrono::high_resolution_clock::now();
+  auto start = high_resolution_clock::now();
 
   bool result = a.parseFile();
 
   // Record end time
-  auto finish = std::chrono::high_resolution_clock::now();
+  auto finish = high_resolution_clock::now();
 
   std::chrono::duration<double> elapsed = finish - start;
 
@@ -32,11 +35,11 @@ int main() {
   if (!result)
     cout << a.getErrors();
   else {
-    start = std::chrono::high_resolution_clock::now();
+    start = high_resolution_clock::now();
 
     result = a.translate();
 
-    finish = std::chrono::high_resolution_clock::now();
+    finish = high_resolution_clock::now();
 
     elapsed = finish - start;
     cout << "Assembled in: " << elapsed.count() << (result ? " assembled successfully" : " build failed.") << endl;
@@ -49,6 +52,10 @@ int main() {
   bool res = d.disassemble();
 
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+  cout << getBinary("JMP") << endl;
+  cout << isOpCode("JMP") << endl;
+  cout << getNumOfArgs("JMP") << endl;
 
 
   return 0;

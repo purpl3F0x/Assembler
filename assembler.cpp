@@ -11,7 +11,7 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
   rom.reserve(SIZE);
 
-  //Basic operationns
+  //Basic operations
   opCodes["NOP"] = 0b0000000;
   opCodes["RI"] = 0b0000001;
   opCodes["LDA"] = 0b0000010;
