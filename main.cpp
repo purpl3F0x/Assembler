@@ -54,7 +54,7 @@ int main() {
 
   opCode *op = opCodes.find("HLT");
 
-  cout << op->name;
+  cout << op->name << "\n";
 
   return 0;
 }

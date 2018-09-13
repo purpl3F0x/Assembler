@@ -22,13 +22,6 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
 }
 
-//short Assembler::opCode(std::string s) {
-//  auto it = opCodes.find(s);
-//
-//  if (it!=opCodes.end()) return it->second;
-//  else throw std::logic_error("Got \" " + s + "\" expected an opcode");
-//}
-
 short Assembler::Register(std::string s) {
   auto it = reg.find(s);
   if (it!=reg.end()) return it->second;
