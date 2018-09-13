@@ -8,138 +8,8 @@
 namespace asmbl {
 
 Assembler::Assembler(bool mode = false) : onDebug{mode} {
-
   rom.reserve(SIZE);
 
-  //Basic operations
-  opCodes["NOP"] = 0b0000000;
-  opCodes["RI"] = 0b0000001;
-  opCodes["LDA"] = 0b0000010;
-  opCodes["LDI"] = 0b0000011;
-  opCodes["STA"] = 0b0000100;
-  opCodes["JMP"] = 0b0000101;
-  opCodes["MI"] = 0b0000110;
-  opCodes["MO"] = 0b0000111;
-
-
-  //Conditional Jumps
-  opCodes["JC"] = 0b0001000;
-  opCodes["JO"] = 0b0001001;
-  opCodes["JG"] = 0b0001010;
-  opCodes["JGE"] = 0b0001011;
-  opCodes["JE"] = 0b0001100;
-  opCodes["JLE"] = 0b0001101;
-  opCodes["JL"] = 0b0001110;
-  opCodes["JNO"] = 0b0001111;
-  opCodes["JZ"] = 0b0010000;
-  opCodes["JNZ"] = 0b0010001;
-  opCodes["JS"] = 0b0010010;
-  opCodes["JNS"] = 0b0010011;
-
-  // ALU
-  opCodes["ADD"] = 0b1000000;
-  opCodes["SUB"] = 0b1000001;
-  opCodes["MUL"] = 0b1000010;
-  opCodes["DIV"] = 0b1000011;
-  opCodes["ADDI"] = 0b1000100;
-  opCodes["SUBI"] = 0b1000101;
-  opCodes["MULI"] = 0b1000110;
-  opCodes["DIVI"] = 0b1000111;
-  //Complex ALU operations
-  opCodes["SQRT"] = 0b1001000;
-  opCodes["MOD"] = 0b1001001;
-
-  // Bitwise operationns
-  opCodes["AND"] = 0b1100000;
-  opCodes["OR"] = 0b11000001;
-  opCodes["NAND"] = 0b1100010;
-  opCodes["NOR"] = 0b1100011;
-  opCodes["NOT"] = 0b1100100;
-  opCodes["XOR"] = 0b1100101;
-  opCodes["XOR"] = 0b1100110;
-  opCodes["SHL"] = 0b1100111;
-  opCodes["SHR"] = 0b1101000;
-  opCodes["ROT"] = 0b1101001;
-  opCodes["CMP"] = 0b1101010;
-
-  //FPU
-  opCodes["FADD"] = 0b1110000;
-  opCodes["FSUB"] = 0b1110001;
-  opCodes["FMUL"] = 0b1110010;
-  opCodes["FDIV"] = 0b1110011;
-  opCodes["FSQRT"] = 0b1110100;
-  opCodes["ITOF"] = 0b1110101;
-  opCodes["FTOI"] = 0b1110111;
-  opCodes["FMOD"] = 0b1111000;
-
-  //HACF -- HALT AND CATCH FIRE
-  opCodes["HLT"] = 0b1111111;
-
-  //////////////////////////////////////////
-  /////// Number of Arguments of each opCode
-
-  //Basic operationns
-  numOfArgs["NOP"] = 0;
-  numOfArgs["LDA"] = 1;
-  numOfArgs["LDI"] = 1;
-  numOfArgs["JMP"] = 1;
-  numOfArgs["MI"] = 2;
-  numOfArgs["MO"] = 2;
-
-  //Conditional Jumps
-  numOfArgs["JC"] = 1;
-  numOfArgs["JO"] = 1;
-  numOfArgs["JG"] = 1;
-  numOfArgs["JGE"] = 1;
-  numOfArgs["JE"] = 1;
-  numOfArgs["JLE"] = 1;
-  numOfArgs["JL"] = 1;
-  numOfArgs["JNO"] = 1;
-  numOfArgs["JZ"] = 1;
-  numOfArgs["JNZ"] = 1;
-  numOfArgs["JS"] = 1;
-  numOfArgs["JNS"] = 1;
-
-  // ALU
-  numOfArgs["ADD"] = 3;
-  numOfArgs["SUB"] = 3;
-  numOfArgs["MUL"] = 3;
-  numOfArgs["DIV"] = 3;
-  numOfArgs["ADDI"] = 3;
-  numOfArgs["SUBI"] = 3;
-  numOfArgs["MULI"] = 3;
-  numOfArgs["DIVI"] = 3;
-  //Complex ALU operations
-  numOfArgs["SQRT"] = 3;
-  numOfArgs["MOD"] = 3;
-
-  // Bitwise operationns
-  numOfArgs["AND"] = 3;
-  numOfArgs["OR"] = 3;
-  numOfArgs["NAND"] = 3;
-  numOfArgs["NOR"] = 3;
-  numOfArgs["NOT"] = 3;
-  numOfArgs["XOR"] = 3;
-  numOfArgs["XOR"] = 3;
-  numOfArgs["SHL"] = 3;
-  numOfArgs["SHR"] = 3;
-  numOfArgs["ROT"] = 3;
-
-  //FPU
-  numOfArgs["FADD"] = 3;
-  numOfArgs["FSUB"] = 3;
-  numOfArgs["FMUL"] = 3;
-  numOfArgs["FDIV"] = 3;
-  numOfArgs["FSQRT"] = 3;
-  numOfArgs["ITOF"] = 3;
-  numOfArgs["FTOI"] = 3;
-  numOfArgs["FMOD"] = 3;
-
-  //HACF -- HALT AND CATCH FIRE
-  numOfArgs["HLT"] = 0;
-
-
-  ////////////////////////////////
   //Registers
   reg["r1"] = 0b000;
   reg["r2"] = 0b001;
@@ -152,12 +22,12 @@ Assembler::Assembler(bool mode = false) : onDebug{mode} {
 
 }
 
-short Assembler::opCode(std::string s) {
-  auto it = opCodes.find(s);
-
-  if (it!=opCodes.end()) return it->second;
-  else throw std::logic_error("Got \" " + s + "\" expected an opcode");
-}
+//short Assembler::opCode(std::string s) {
+//  auto it = opCodes.find(s);
+//
+//  if (it!=opCodes.end()) return it->second;
+//  else throw std::logic_error("Got \" " + s + "\" expected an opcode");
+//}
 
 short Assembler::Register(std::string s) {
   auto it = reg.find(s);
@@ -226,7 +96,9 @@ bool Assembler::translate(std::string outName) {
      *
      * RI 2 args (16-bit) -> 3 ROM addresses -> 3 clk cycles
      * */
-    rom[romAddressPointer++] = opCode("RI") << (WORD - OPCODE_SIZE);
+
+    int ri = opCodes.find("RI")->binary;
+    rom[romAddressPointer++] = opCodes.getBinary("RI") << (WORD - OPCODE_SIZE);
     rom[romAddressPointer++] = ramAddressPointer++;
     rom[romAddressPointer++] = d.second;
   }
@@ -237,7 +109,7 @@ bool Assembler::translate(std::string outName) {
     int pos = 3;
     std::vector<std::string>::iterator arg_it = inst.arguments.begin();
 
-    rom.at(romAddressPointer) = opCode(inst.opCode) << (WORD - OPCODE_SIZE);
+    rom.at(romAddressPointer) = opCodes.getBinary(inst.opCode) << (WORD - OPCODE_SIZE);
 
     if (!inst.arguments.size()) continue;                                    // opCodes with no args
 
@@ -272,7 +144,10 @@ bool Assembler::translate(std::string outName) {
 std::string Assembler::getErrors() const {
   std::string out = "";
 
-  for (auto e :errors) out.append(e.get());
+  for (auto e :errors) {
+    out.append(e.get());
+    out.append("\n");
+  }
 
   return out;
 }
@@ -422,7 +297,7 @@ bool Assembler::data_typeParser(const std::string &line, map<std::string, short>
 
     int_val = to_int(d.value);
 
-  } else if (opCodes.find(d.name)!=opCodes.end()
+  } else if (opCodes.isOpCode(d.name)
       || find(rules::types.begin(), rules::types.end(), d.name)!=rules::types.end()) {
     errors.emplace_back(
         error(
@@ -473,9 +348,11 @@ bool Assembler::lineParser(const std::string &line) {
           >> *(space | rules::comment)
   );
 
-  if (result && inst.size && opCodes.find(inst.opCode)==opCodes.end()) {    // given identifier is not valid opCode
-    result = false;
+  opCode *op = opCodes.find(inst.opCode);
 
+  if (result && inst.size && !op) {    // given identifier is not valid opCode
+    result = false;
+    cout << opCodes.isOpCode(inst.opCode) << endl;
     errors.emplace_back(
         error(cur_line,
               iter_end - iter_start,
@@ -484,7 +361,7 @@ bool Assembler::lineParser(const std::string &line) {
               line
         )
     );
-  } else if (result && inst.size!=numOfArgs[inst.opCode]) {                 // Check arguments number
+  } else if (result && inst.size!=op->numOfArgs) {                 // Check arguments number
 
     result = false;
 
@@ -492,14 +369,15 @@ bool Assembler::lineParser(const std::string &line) {
         error(cur_line,
               iter_start - line.begin(),
               "Logic Error",
-              inst.opCode + " expects " + to_string(numOfArgs[inst.opCode]) + " argument(s), got " +
+              inst.opCode + " expects " + to_string(op->numOfArgs) + " argument(s), got " +
                   to_string(inst.size) + ".",    // Example: ADD expects 3 arguments, got 4
               line
         )
     );
   }
 
-  if (iter_end!=iter_start) {                                               // Create an error if parser
+  if (iter_end
+      !=iter_start) {                                               // Create an error if parser hasn't come to end of line
 
     result = false;
 
@@ -515,7 +393,7 @@ bool Assembler::lineParser(const std::string &line) {
 
   // Code used for debugging
   if (onDebug) {
-    cout << cur_line << ": " << inst.opCode << "(" << numOfArgs[inst.opCode] << ")" << endl;
+    cout << cur_line << ": " << inst.opCode << "(" << opCodes.numOfArgs(inst.opCode) << ")" << endl;
 
     for (auto i : inst.arguments)
       cout << "\t->" << i << std::endl;

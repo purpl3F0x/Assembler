@@ -36,8 +36,7 @@ bool Disassembler::disassemble(bool silent) {
   while (!input.eof()) {
     input.read(reinterpret_cast<char *>(&adr), sizeof(uint16_t));
 
-    cout << (boost::format("%04b : %s \n")%adr%opCodes.getName(adr >> WORD - OPCODE_SIZE)).str();
-
+    cout << (boost::format("%04x : %s \n")%adr%opCodes.getName(adr >> WORD - OPCODE_SIZE)).str();
 
     if (!adr) {
       count++;

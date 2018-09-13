@@ -146,8 +146,6 @@ class Assembler {
  public:
   Assembler(bool mode);
 
-  short opCode(std::string s);
-
   short Register(std::string s);
 
   void setInputFile(std::string file);
@@ -198,8 +196,6 @@ class Assembler {
   std::vector<short> rom;
 
   // All maps provιde binary value of each type
-  map<std::string, short> opCodes;       // List off all opCodes
-  map<std::string, short> numOfArgs;     // Number of Arguments of each opCode
   map<std::string, short> reg;           // Registers
   map<std::string, short> data;          // Variable Stack
   map<std::string, short> text;          // Const Stack

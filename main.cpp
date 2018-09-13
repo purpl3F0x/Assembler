@@ -17,7 +17,7 @@ int main() {
 
   asmbl::Assembler a(false);
 
-  a.setInputFile("test.asm");
+  a.setInputFile("bench.asm");
 
   // Record start time
   auto start = high_resolution_clock::now();
@@ -29,7 +29,7 @@ int main() {
 
   std::chrono::duration<double> elapsed = finish - start;
 
-  cout << "File parsed in: " << elapsed.count() << (result ? " with success." : " and failed.") << endl;
+  cout << "File parsed in: " << elapsed.count() << (result ? " with success." : " and failed to assemble.") << endl;
 
   if (!result)
     cout << a.getErrors();
@@ -51,6 +51,10 @@ int main() {
 
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+
+  opCode *op = opCodes.find("HLT");
+
+  cout << op->name;
 
   return 0;
 }
