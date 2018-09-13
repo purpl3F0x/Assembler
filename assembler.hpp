@@ -31,6 +31,9 @@
 #include <string>
 #include <vector>
 
+#include "opcodes.hpp"
+
+
 #define SIZE 65536
 #define WORD 16
 #define OPCODE_SIZE 7

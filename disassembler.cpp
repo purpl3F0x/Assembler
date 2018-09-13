@@ -8,19 +8,19 @@
 
 namespace disasmbl {
 
-disassembler::disassembler() {
+Disassembler::Disassembler() {
   infile = "";
 }
 
-disassembler::disassembler(std::string infile) {
+Disassembler::Disassembler(std::string infile) {
   this->infile = infile;
 }
 
-void disassembler::setFile(std::string infile) {
+void Disassembler::setFile(std::string infile) {
   this->infile = infile;
 }
 
-bool disassembler::disassemble(bool silent) {
+bool Disassembler::disassemble(bool silent) {
   ifstream input(infile, ios::binary);
 
   if (!input) {

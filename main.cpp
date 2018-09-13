@@ -8,15 +8,14 @@
 
 #include "assembler.hpp"
 #include "disassembler.hpp"
-#include "opcodes.hpp"
 
 int main() {
-  using namespace asmbl;
-  using namespace disasmbl;
 
   using std::chrono::high_resolution_clock;
+  using std::cout;
+  using std::endl;
 
-  Assembler a(false);
+  asmbl::Assembler a(false);
 
   a.setInputFile("test.asm");
 
@@ -46,17 +45,15 @@ int main() {
   }
 
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-
-  disassembler d("test.bin");
+  disasmbl::Disassembler d("test.bin");
 
   bool res = d.disassemble();
 
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
-  cout << getBinary("JMP") << endl;
-  cout << isOpCode("JMP") << endl;
-  cout << getNumOfArgs("JMP") << endl;
-
+  for (auto &&op : opCodes) {
+    cout << op << endl;
+  }
 
   return 0;
 }

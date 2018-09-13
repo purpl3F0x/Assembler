@@ -1,4 +1,4 @@
-/* disassembler.hpp
+/* Disassembler.hpp
  *
  * /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  * --------------------------------------------------------
@@ -9,8 +9,8 @@
  *  Created by Stavros Avramidis on 7/1/18
  *  Published under MIT License
 */
-#ifndef ASSEMBLER_DISASSEMBLER_HPP
-#define ASSEMBLER_DISASSEMBLER_HPP
+#ifndef ASSEMBLER_Disassembler_HPP
+#define ASSEMBLER_Disassembler_HPP
 
 // Boost libs
 #include <boost/fusion/adapted.hpp>
@@ -31,6 +31,7 @@
 
 // Project header files
 #include "assembler.hpp"
+#include "opcodes.hpp"
 
 namespace disasmbl {
 
@@ -40,10 +41,10 @@ using std::ifstream;
 using std::vector;
 using std::ios;
 
-class disassembler {
+class Disassembler {
  public:
-  disassembler();
-  disassembler(std::string infile);
+  Disassembler();
+  Disassembler(std::string infile);
 
   void setFile(std::string infile);
 
@@ -57,4 +58,4 @@ class disassembler {
 
 } // end of disasmbl namsespace
 
-#endif //ASSEMBLER_DISASSEMBLER_HPP
+#endif //ASSEMBLER_Disassembler_HPP
