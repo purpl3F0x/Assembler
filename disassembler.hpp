@@ -16,6 +16,7 @@
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 #include <boost/phoenix.hpp>
+#include <boost/format.hpp>
 
 // STL libs (Yeah I know that's redundant)
 #include <algorithm>

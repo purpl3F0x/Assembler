@@ -4,7 +4,7 @@
 
 #include "opcodes.hpp"
 
-unsigned short OpCodes::getBinary(std::string name) {
+unsigned short OpCodes::getBinary(std::string name) const {
   for (auto op: *this)
     if (op.name==name)
       return op.binary;
@@ -12,7 +12,7 @@ unsigned short OpCodes::getBinary(std::string name) {
   return 0; // returns NOP
 }
 
-unsigned int OpCodes::numOfArgs(std::string name) {
+unsigned int OpCodes::numOfArgs(std::string name) const {
   for (auto op: *this)
     if (op.name==name)
       return op.numOfArgs;
@@ -20,7 +20,15 @@ unsigned int OpCodes::numOfArgs(std::string name) {
   return 0;
 }
 
-bool OpCodes::isOpCode(std::string name) {
+std::string OpCodes::getName(unsigned short bin) const {
+  for (auto op: *this)
+    if (op.binary==bin)
+      return op.name;
+
+  return "";
+}
+
+bool OpCodes::isOpCode(std::string name) const {
   for (auto op: *this)
     if (op.name==name)
       return true;

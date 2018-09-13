@@ -37,11 +37,13 @@ struct opCode {
 struct OpCodes : public std::vector<opCode> {
   using std::vector<opCode>::vector;
 
-  unsigned short getBinary(std::string name);
+  unsigned short getBinary(std::string name) const;
 
-  unsigned int numOfArgs(std::string name);
+  unsigned int numOfArgs(std::string name) const;
 
-  bool isOpCode(std::string name);
+  std::string getName(unsigned short bin) const;
+
+  bool isOpCode(std::string name) const;
 
   opCode *find(std::string name);
 

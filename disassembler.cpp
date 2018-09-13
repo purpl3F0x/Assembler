@@ -36,14 +36,12 @@ bool Disassembler::disassemble(bool silent) {
   while (!input.eof()) {
     input.read(reinterpret_cast<char *>(&adr), sizeof(uint16_t));
 
-    cout << adr
-         << " : "
-         << (adr >> WORD - OPCODE_SIZE)
-         << endl;
+    cout << (boost::format("%04b : %s \n")%adr%opCodes.getName(adr >> WORD - OPCODE_SIZE)).str();
+
 
     if (!adr) {
-      count += 1;
-      if (count > 10) break;
+      count++;
+      if (count > 5) break;
     } else {
       count = 0;
     }
