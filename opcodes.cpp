@@ -4,7 +4,11 @@
 
 #include "opcodes.hpp"
 
-unsigned short OpCodes::getBinary(std::string name) const {
+
+/*-------------------------------------------*/
+/*--------------    OpCodes   ---------------*/
+
+unsigned int OpCodes::getBinary(std::string name) const {
   for (auto op: *this)
     if (op.name==name)
       return op.binary;
@@ -42,6 +46,14 @@ opCode *OpCodes::find(std::string name) {
       return &op;
 
   return nullptr;
+}
+
+std::string OpCodes::operator[](int bin) {
+  return this->getName(bin);
+}
+
+int OpCodes::operator[](std::string name) {
+  return this->getBinary(name);
 }
 
 /* Declare opCodes*/

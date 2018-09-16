@@ -15,9 +15,9 @@ int main() {
   using std::cout;
   using std::endl;
 
-  asmbl::Assembler a(false);
+  asmbl::Assembler a(true);
 
-  a.setInputFile("bench.asm");
+  a.setInputFile("test.asm");
 
   // Record start time
   auto start = high_resolution_clock::now();
@@ -52,9 +52,6 @@ int main() {
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
 
-  opCode *op = opCodes.find("HLT");
-
-  cout << op->name << "\n";
 
   return 0;
 }

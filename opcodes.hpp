@@ -14,8 +14,11 @@
 #include <string>
 #include <vector>
 
+
+/*-------------------------------------------*/
+/*--------------    OpCode    ---------------*/
 struct opCode {
-  unsigned short binary:7;
+  unsigned int binary:7;
   std::string name;
   unsigned int numOfArgs;
 
@@ -23,21 +26,20 @@ struct opCode {
       : binary{b}, name{n}, numOfArgs{noa} {}
 
   friend std::ostream &operator<<(std::ostream &out, const opCode &op) {
-
-    out << (boost::format("%02x %5s (%d)")%op.binary%op.name%op.numOfArgs).str();
-//    std::stringstream stream;
-//
-//    stream << std::hex << op.binary;
-//    out << stream.str() << std::string("  ")
-//        << op.name << std::string(" (") << std::to_string(op.numOfArgs) << std::string(")");
+    out << (boost::format("%02x %5s (%d)")%op.binary%op.name%op.numOfArgs);
     return out;
   }
 };
 
+
+/*-------------------------------------------*/
+/*--------------    OpCodes   ---------------*/
+
+
 struct OpCodes : public std::vector<opCode> {
   using std::vector<opCode>::vector;
 
-  unsigned short getBinary(std::string name) const;
+  unsigned int getBinary(std::string name) const;
 
   unsigned int numOfArgs(std::string name) const;
 
@@ -47,6 +49,9 @@ struct OpCodes : public std::vector<opCode> {
 
   opCode *find(std::string name);
 
+  int operator[](std::string name);
+
+  std::string operator[](int bin);
 };
 
 extern OpCodes opCodes;

@@ -37,7 +37,7 @@ bool Assembler::parseFile() {
   infile.open(cur_file);
 
   if (onDebug) {
-    cout << "Opening " << cur_file << " ..." << endl;
+    cout << "Opening " << cur_file << " ..." << "\n";
     if (infile) cout << "Ok\n\n";
     else {
       cout << "Cannot Open File\n\n";
@@ -91,7 +91,7 @@ bool Assembler::translate(std::string outName) {
      * */
 
     int ri = opCodes.find("RI")->binary;
-    rom[romAddressPointer++] = opCodes.getBinary("RI") << (WORD - OPCODE_SIZE);
+    rom[romAddressPointer++] = ri << (WORD - OPCODE_SIZE);
     rom[romAddressPointer++] = ramAddressPointer++;
     rom[romAddressPointer++] = d.second;
   }
@@ -286,7 +286,7 @@ bool Assembler::data_typeParser(const std::string &line, map<std::string, short>
             line
         )
     );
-  } else if (d.type=="int" || d.type=="bool" || d.type=="char" || d.type=="float") {
+  } else if (find(rules::types.begin(), rules::types.end(), d.type)!=rules::types.end()) {
 
     int_val = to_int(d.value);
 
@@ -301,6 +301,7 @@ bool Assembler::data_typeParser(const std::string &line, map<std::string, short>
             line
         )
     );
+    result = false;
   } else {
     errors.emplace_back(
         error(
@@ -314,7 +315,7 @@ bool Assembler::data_typeParser(const std::string &line, map<std::string, short>
     result = false;
   }
 
-  if (onDebug) cout << d.type << ": " << d.name << "\n\t->" << d.value << " (" << int_val << ")" << endl;
+  if (onDebug) cout << (boost::format("%s: %s \n\t->%s (%d)\n")%d.type%d.name%d.value%int_val);
 
   if (result) stack[d.name] = int_val;
 
@@ -341,11 +342,10 @@ bool Assembler::lineParser(const std::string &line) {
           >> *(space | rules::comment)
   );
 
-  opCode *op = opCodes.find(inst.opCode);
+  auto *op = opCodes.find(inst.opCode);
 
   if (result && inst.size && !op) {    // given identifier is not valid opCode
     result = false;
-    cout << opCodes.isOpCode(inst.opCode) << endl;
     errors.emplace_back(
         error(cur_line,
               iter_end - iter_start,
@@ -386,10 +386,10 @@ bool Assembler::lineParser(const std::string &line) {
 
   // Code used for debugging
   if (onDebug) {
-    cout << cur_line << ": " << inst.opCode << "(" << opCodes.numOfArgs(inst.opCode) << ")" << endl;
+    cout << (boost::format("%d: %4s (%d)\n")%cur_line%op->name%op->numOfArgs);
 
     for (auto i : inst.arguments)
-      cout << "\t->" << i << std::endl;
+      cout << "\t->" << i << "\n";
   }
 
   // Add instruction to stack
@@ -500,16 +500,16 @@ bool Assembler::parser(ifstream &fs) {
 
   if (!success && onDebug)
     for (auto e : errors)
-      cout << e.get() << endl;
+      cout << e.get() << "\n";
 
   if (onDebug) {                                          // Print Variables values onDebug mode
-    cout << "_______" << " data " << "_______" << endl;
+    cout << "_______" << " data " << "_______" << "\n";
     for (auto &i:data)
-      cout << i.first << " : " << i.second << endl;
+      cout << i.first << " : " << i.second << "\n";
 
-    cout << "_______" << " text " << "_______" << endl;
+    cout << "_______" << " text " << "_______" << "\n";
     for (auto &i:text)
-      cout << i.first << " : " << i.second << endl;
+      cout << i.first << " : " << i.second << "\n";
   }
 
   return success;
