@@ -1,6 +1,8 @@
-//
-// Created by purpl3f0x on 9/12/18.
-//
+/*  opcodes.cpp
+ *
+ *  Created by purpl3f0x on 9/12/18.
+ *  Stavros Avramidis
+*/
 
 #include "opcodes.hpp"
 

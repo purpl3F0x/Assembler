@@ -1,9 +1,10 @@
 /*  disassembler.cpp
  *
- *  Created by Stavros Avramidis on 9/10/18.
+ *  Created by purpl3f0x on 9/10/18.
+ *  Stavros Avramidis
 */
 
-#include "assembler.hpp"
+
 #include "disassembler.hpp"
 
 namespace disasmbl {

@@ -1,6 +1,8 @@
-//
-// Created by purpl3f0x on 9/10/18.
-//
+/*  opcodes.hpp
+ *
+ *  Created by purpl3f0x on 9/10/18.
+ *  Stavros Avramidis
+*/
 
 #pragma once
 

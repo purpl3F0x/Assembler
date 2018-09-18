@@ -1,0 +1,253 @@
+<html>
+<head>
+    <title>rules.hpp</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+        .ln {
+            color: #f8f8f2;
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .s0 {
+            color: rgb(75, 150, 63);
+        }
+
+        .s1 {
+            color: rgb(248, 248, 242);
+        }
+
+        .s2 {
+            color: rgb(249, 38, 114);
+        }
+
+        .s3 {
+            color: rgb(230, 219, 116);
+        }
+
+        .s4 {
+            color: rgb(204, 120, 50);
+        }
+
+        .s5 {
+            color: rgb(174, 129, 255);
+        }
+    </style>
+</head>
+<BODY BGCOLOR="#272822">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060">
+    <TR>
+        <TD>
+            <CENTER>
+                <FONT FACE="Arial, Helvetica" COLOR="#000000">
+                    rules.hpp</FONT>
+            </center>
+        </TD>
+    </TR>
+</TABLE>
+<pre>
+<a name="l1"><span class="ln">1    </span></a><span class="s0">/*  assembler.cpp 
+<a name="l2"><span class="ln">2    </span></a> * 
+<a name="l3"><span class="ln">3    </span></a> *  Created by purpl3f0x on 9/16/18. 
+<a name="l4"><span class="ln">4    </span></a> *  Stavros Avramidis 
+<a name="l5"><span class="ln">5    </span></a>*/</span><span class="s1"> 
+<a name="l6"><span class="ln">6    </span></a> 
+<a name="l7"><span class="ln">7    </span></a></span><span class="s2">#ifndef </span><span class="s1">ASSEMBLER_RULES_HPP 
+<a name="l8"><span class="ln">8    </span></a></span><span class="s2">#define </span><span class="s1">ASSEMBLER_RULES_HPP 
+<a name="l9"><span class="ln">9    </span></a> 
+<a name="l10"><span class="ln">10   </span></a></span><span class="s0">// Boost libs</span><span class="s1"> 
+<a name="l11"><span class="ln">11   </span></a></span><span class="s2">#include </span><span class="s3">&lt;boost/format.hpp&gt;</span><span
+        class="s1">
+<a name="l12"><span class="ln">12   </span></a></span><span class="s2">#include </span><span class="s3">&lt;boost/fusion/adapted.hpp&gt;</span><span
+        class="s1">
+<a name="l13"><span class="ln">13   </span></a></span><span class="s2">#include </span><span class="s3">&lt;boost/spirit/home/x3.hpp&gt;</span><span
+        class="s1">
+<a name="l14"><span class="ln">14   </span></a> 
+<a name="l15"><span class="ln">15   </span></a></span><span class="s0">// STL libs</span><span class="s1"> 
+<a name="l16"><span class="ln">16   </span></a></span><span class="s2">#include </span><span
+        class="s3">&lt;string&gt;</span><span class="s1">
+<a name="l17"><span class="ln">17   </span></a></span><span class="s2">#include </span><span
+        class="s3">&lt;vector&gt;</span><span class="s1">
+<a name="l18"><span class="ln">18   </span></a> 
+<a name="l19"><span class="ln">19   </span></a> 
+<a name="l20"><span class="ln">20   </span></a></span><span
+        class="s0">/*---------------namespace rules-------------*/</span><span class="s1">
+<a name="l21"><span class="ln">21   </span></a> 
+<a name="l22"><span class="ln">22   </span></a></span><span class="s2">namespace </span><span class="s1">rules { 
+<a name="l23"><span class="ln">23   </span></a> 
+<a name="l24"><span class="ln">24   </span></a></span><span class="s2">namespace </span><span class="s1">x3 </span><span
+        class="s2">= </span><span class="s1">boost</span><span class="s2">::</span><span class="s1">spirit</span><span
+        class="s2">::</span><span class="s1">x3</span><span class="s4">;</span><span class="s1">
+<a name="l25"><span class="ln">25   </span></a></span><span class="s2">namespace </span><span
+        class="s1">ascii </span><span class="s2">= </span><span class="s1">boost</span><span class="s2">::</span><span
+        class="s1">spirit</span><span class="s2">::</span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">ascii</span><span class="s4">;</span><span class="s1">
+<a name="l26"><span class="ln">26   </span></a> 
+<a name="l27"><span class="ln">27   </span></a> 
+<a name="l28"><span class="ln">28   </span></a></span><span class="s2">using </span><span class="s1">std</span><span
+        class="s2">::</span><span class="s1">vector</span><span class="s4">;</span><span class="s1">
+<a name="l29"><span class="ln">29   </span></a> 
+<a name="l30"><span class="ln">30   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">_attr</span><span class="s4">;</span><span class="s1">
+<a name="l31"><span class="ln">31   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">char_</span><span class="s4">;</span><span class="s1">
+<a name="l32"><span class="ln">32   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">double_</span><span class="s4">;</span><span class="s1">
+<a name="l33"><span class="ln">33   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">eol</span><span class="s4">;</span><span class="s1">
+<a name="l34"><span class="ln">34   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">int_</span><span class="s4">;</span><span class="s1">
+<a name="l35"><span class="ln">35   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">lexeme</span><span class="s4">;</span><span class="s1">
+<a name="l36"><span class="ln">36   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">lit</span><span class="s4">;</span><span class="s1">
+<a name="l37"><span class="ln">37   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">parse</span><span class="s4">;</span><span class="s1">
+<a name="l38"><span class="ln">38   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">phrase_parse</span><span class="s4">;</span><span class="s1">
+<a name="l39"><span class="ln">39   </span></a></span><span class="s2">using </span><span class="s1">x3</span><span
+        class="s2">::</span><span class="s1">skip</span><span class="s4">;</span><span class="s1">
+<a name="l40"><span class="ln">40   </span></a> 
+<a name="l41"><span class="ln">41   </span></a></span><span class="s2">using </span><span class="s1">ascii</span><span
+        class="s2">::</span><span class="s1">space</span><span class="s4">;</span><span class="s1">
+<a name="l42"><span class="ln">42   </span></a> 
+<a name="l43"><span class="ln">43   </span></a></span><span class="s2">const </span><span class="s1">vector</span><span
+        class="s2">&lt;</span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt; </span><span class="s1">types
+<a name="l44"><span class="ln">44   </span></a>    </span><span class="s2">= </span><span class="s1">{</span><span
+        class="s3">&quot;int&quot;</span><span class="s4">, </span><span class="s3">&quot;bool&quot;</span><span
+        class="s4">, </span><span class="s3">&quot;char&quot;</span><span class="s4">, </span><span class="s3">&quot;float&quot;</span><span
+        class="s1">}</span><span class="s4">;</span><span class="s1">
+<a name="l45"><span class="ln">45   </span></a> 
+<a name="l46"><span class="ln">46   </span></a></span><span class="s2">auto const </span><span
+        class="s1">name </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">name</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l47"><span class="ln">47   </span></a>                      </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span
+        class="s3">&quot;a-zA-Z&quot;</span><span class="s1">) </span><span class="s2">&gt;&gt; *</span><span
+        class="s1">char_(</span><span class="s3">&quot;a-z_A-Z0-9&quot;</span><span class="s1">)]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l48"><span class="ln">48   </span></a> 
+<a name="l49"><span class="ln">49   </span></a></span><span
+        class="s0">/*-------------------------------------------*/</span><span class="s1">
+<a name="l50"><span class="ln">50   </span></a></span><span
+        class="s0">/*--------------Section Parser---------------*/</span><span class="s1">
+<a name="l51"><span class="ln">51   </span></a> 
+<a name="l52"><span class="ln">52   </span></a></span><span class="s2">auto const </span><span
+        class="s1">data </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">data</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l53"><span class="ln">53   </span></a>                      </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.data&quot;</span><span class="s1">]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l54"><span class="ln">54   </span></a> 
+<a name="l55"><span class="ln">55   </span></a></span><span class="s2">auto const </span><span
+        class="s1">text </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">text</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l56"><span class="ln">56   </span></a>                      </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.text&quot;</span><span class="s1">]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l57"><span class="ln">57   </span></a> 
+<a name="l58"><span class="ln">58   </span></a></span><span class="s2">auto const </span><span
+        class="s1">start </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">start</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l59"><span class="ln">59   </span></a>                       </span><span class="s2">= </span><span class="s1">lexeme[</span><span
+        class="s3">&quot;section &quot;</span><span class="s1">] </span><span class="s2">&gt;&gt; </span><span
+        class="s1">lexeme[</span><span class="s3">&quot;.start&quot;</span><span class="s1">]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l60"><span class="ln">60   </span></a> 
+<a name="l61"><span class="ln">61   </span></a></span><span
+        class="s0">/*-------------------------------------------*/</span><span class="s1">
+<a name="l62"><span class="ln">62   </span></a></span><span
+        class="s0">/*-------------Data type parsers-------------*/</span><span class="s1">
+<a name="l63"><span class="ln">63   </span></a> 
+<a name="l64"><span class="ln">64   </span></a></span><span class="s2">auto const </span><span
+        class="s1">bin_val </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">bin_val</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l65"><span class="ln">65   </span></a>                         </span><span class="s2">= </span><span
+        class="s1">lexeme[lit(</span><span class="s3">&quot;0b&quot;</span><span class="s1">) </span><span class="s2">&gt;&gt; +</span><span
+        class="s1">char_(</span><span class="s3">&quot;0-1&quot;</span><span class="s1">)]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l66"><span class="ln">66   </span></a> 
+<a name="l67"><span class="ln">67   </span></a></span><span class="s2">auto const </span><span
+        class="s1">hex_val </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">hex_val</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l68"><span class="ln">68   </span></a>                         </span><span class="s2">= </span><span
+        class="s1">lexeme[char_(</span><span class="s3">&quot;0&quot;</span><span class="s1">) </span><span class="s2">&gt;&gt; </span><span
+        class="s1">char_(</span><span class="s3">&quot;x&quot;</span><span class="s1">) </span><span class="s2">&gt;&gt; +</span><span
+        class="s1">char_(</span><span class="s3">&quot;0-9a-fA-F&quot;</span><span class="s1">)]</span><span class="s4">;</span><span
+        class="s1">
+<a name="l69"><span class="ln">69   </span></a> 
+<a name="l70"><span class="ln">70   </span></a></span><span class="s2">auto const </span><span
+        class="s1">chr </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">str</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l71"><span class="ln">71   </span></a>                     </span><span class="s2">= </span><span class="s1">lexeme[char_(</span><span
+        class="s3">&quot;</span><span class="s5">\'</span><span class="s3">&quot;</span><span class="s1">) </span><span
+        class="s2">&gt;&gt; *</span><span class="s1">(ascii</span><span class="s2">::</span><span
+        class="s1">char_ </span><span class="s2">- </span><span class="s3">'</span><span class="s5">\'</span><span
+        class="s3">'</span><span class="s1">) </span><span class="s2">&gt;&gt; </span><span
+        class="s1">char_(</span><span class="s3">&quot;</span><span class="s5">\'</span><span
+        class="s3">&quot;</span><span class="s1">)]</span><span class="s4">;</span><span class="s1">
+<a name="l72"><span class="ln">72   </span></a> 
+<a name="l73"><span class="ln">73   </span></a></span><span class="s2">auto const </span><span
+        class="s1">boolean </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">boolean</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l74"><span class="ln">74   </span></a>                         </span><span class="s2">= </span><span
+        class="s1">lexeme[lit(</span><span class="s3">&quot;true&quot;</span><span class="s1">) </span><span class="s2">| </span><span
+        class="s1">lit(</span><span class="s3">&quot;false&quot;</span><span class="s1">)]</span><span
+        class="s4">;</span><span class="s1">
+<a name="l75"><span class="ln">75   </span></a> 
+<a name="l76"><span class="ln">76   </span></a></span><span class="s0">//auto const floating</span><span class="s1"> 
+<a name="l77"><span class="ln">77   </span></a> 
+<a name="l78"><span class="ln">78   </span></a></span><span class="s2">auto const </span><span
+        class="s1">value </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">rule</span><span class="s2">&lt;class </span><span class="s1">declaration</span><span
+        class="s4">, </span><span class="s1">std</span><span class="s2">::</span><span class="s1">string</span><span
+        class="s2">&gt;</span><span class="s1">{}
+<a name="l79"><span class="ln">79   </span></a>                       </span><span class="s2">= </span><span class="s1">hex_val </span><span
+        class="s2">| </span><span class="s1">bin_val </span><span class="s2">| </span><span class="s1">chr </span><span
+        class="s2">| </span><span class="s1">(</span><span class="s2">+</span><span class="s1">char_(</span><span
+        class="s3">&quot;0-9&quot;</span><span class="s1">)) </span><span class="s2">| </span><span
+        class="s1">boolean</span><span class="s4">;</span><span class="s1">
+<a name="l80"><span class="ln">80   </span></a> 
+<a name="l81"><span class="ln">81   </span></a></span><span
+        class="s0">/*-------------------------------------------*/</span><span class="s1">
+<a name="l82"><span class="ln">82   </span></a></span><span
+        class="s0">/*------------------Comment------------------*/</span><span class="s1">
+<a name="l83"><span class="ln">83   </span></a> 
+<a name="l84"><span class="ln">84   </span></a></span><span class="s2">auto const </span><span
+        class="s1">comment </span><span class="s2">= </span><span class="s1">x3</span><span class="s2">::</span><span
+        class="s1">omit[
+<a name="l85"><span class="ln">85   </span></a>    </span><span class="s3">&quot;//&quot; </span><span class="s2">&gt;&gt; *</span><span
+        class="s1">(char_ </span><span class="s2">- </span><span class="s1">eol)
+<a name="l86"><span class="ln">86   </span></a>        </span><span class="s2">| </span><span
+        class="s3">&quot;/*&quot; </span><span class="s2">&gt;&gt; *</span><span class="s1">(char_ </span><span
+        class="s2">- </span><span class="s3">&quot;*/&quot;</span><span class="s1">) </span><span
+        class="s2">&gt;&gt; </span><span class="s3">&quot;*/&quot;</span><span class="s1">
+<a name="l87"><span class="ln">87   </span></a>]</span><span class="s4">;</span><span class="s1"> 
+<a name="l88"><span class="ln">88   </span></a> 
+<a name="l89"><span class="ln">89   </span></a>} </span><span class="s0">// end of rules namespace</span><span
+        class="s1">
+<a name="l90"><span class="ln">90   </span></a> 
+<a name="l91"><span class="ln">91   </span></a> 
+<a name="l92"><span class="ln">92   </span></a></span><span class="s2">#endif </span><span class="s0">//ASSEMBLER_RULES_HPP</span><span
+        class="s1">
+<a name="l93"><span class="ln">93   </span></a></span></pre>
+</body>
+</html>

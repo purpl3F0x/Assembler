@@ -15,7 +15,7 @@ int main() {
   using std::cout;
   using std::endl;
 
-  asmbl::Assembler a(true);
+  asmbl::Assembler a;
 
   a.setInputFile("test.asm");
 
@@ -45,10 +45,11 @@ int main() {
   }
 
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-  disasmbl::Disassembler d("test.bin");
+  if (result) {
+    disasmbl::Disassembler d("test.bin");
 
   bool res = d.disassemble();
-
+  }
   // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
 

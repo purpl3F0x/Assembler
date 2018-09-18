@@ -10,7 +10,7 @@
     }
 
     .s0 {
-        color: rgb(249, 38, 114);
+        color: rgb(75, 150, 63);
     }
 
     .s1 {
@@ -18,10 +18,18 @@
     }
 
     .s2 {
-        color: rgb(230, 219, 116);
+        color: rgb(249, 38, 114);
     }
 
     .s3 {
+        color: rgb(230, 219, 116);
+    }
+
+    .s4 {
+        color: rgb(204, 120, 50);
+    }
+
+    .s5 {
         color: rgb(174, 129, 255);
     }
 </style>
@@ -33,28 +41,102 @@
 main.cpp</FONT>
 </center></TD></TR></TABLE>
 <pre>
-<span class="s0">#include </span><span class="s2">&lt;iostream&gt;</span><span class="s1"> 
- 
- 
-</span><span class="s0">#include </span><span class="s2">&quot;assembler.hpp&quot;</span><span class="s1"> 
- 
- 
- 
- 
-</span><span class="s0">int </span><span class="s1">main() { 
-    </span><span class="s0">using namespace </span><span class="s1">asmbl; 
- 
-    Assembler a(</span><span class="s0">true</span><span class="s1">); 
- 
-    a.setInputFile(</span><span class="s2">&quot;test.asm&quot;</span><span class="s1">); 
-    </span><span class="s0">bool </span><span class="s1">result </span><span class="s0">= </span><span class="s1">a.parseFile(); 
- 
- 
-    cout </span><span class="s0">&lt;&lt; </span><span class="s1">boolalpha </span><span
-        class="s0">&lt;&lt; </span><span class="s1">result </span><span class="s0">&lt;&lt; </span><span class="s1">endl;
- 
- 
-    </span><span class="s0">return </span><span class="s3">0</span><span class="s1">; 
-}</span></pre>
+<a name="l1"><span class="ln">1    </span></a><span class="s0">/*  assembler.cpp 
+<a name="l2"><span class="ln">2    </span></a> * 
+<a name="l3"><span class="ln">3    </span></a> *  Created by Stavros Avramidis on 7/1/18. 
+<a name="l4"><span class="ln">4    </span></a>*/</span><span class="s1"> 
+<a name="l5"><span class="ln">5    </span></a> 
+<a name="l6"><span class="ln">6    </span></a></span><span class="s2">#include </span><span
+        class="s3">&lt;chrono&gt;  </span><span class="s0">// for high_resolution_clock</span><span class="s1">
+<a name="l7"><span class="ln">7    </span></a></span><span class="s2">#include </span><span
+        class="s3">&lt;iostream&gt;</span><span class="s1">
+<a name="l8"><span class="ln">8    </span></a> 
+<a name="l9"><span class="ln">9    </span></a></span><span class="s2">#include </span><span class="s3">&quot;assembler.hpp&quot;</span><span
+        class="s1">
+<a name="l10"><span class="ln">10   </span></a></span><span class="s2">#include </span><span class="s3">&quot;disassembler.hpp&quot;</span><span
+        class="s1">
+<a name="l11"><span class="ln">11   </span></a> 
+<a name="l12"><span class="ln">12   </span></a></span><span class="s2">int </span><span class="s1">main() { 
+<a name="l13"><span class="ln">13   </span></a> 
+<a name="l14"><span class="ln">14   </span></a>  </span><span class="s2">using </span><span class="s1">std</span><span
+        class="s2">::</span><span class="s1">chrono</span><span class="s2">::</span><span class="s1">high_resolution_clock</span><span
+        class="s4">;</span><span class="s1">
+<a name="l15"><span class="ln">15   </span></a>  </span><span class="s2">using </span><span class="s1">std</span><span
+        class="s2">::</span><span class="s1">cout</span><span class="s4">;</span><span class="s1">
+<a name="l16"><span class="ln">16   </span></a>  </span><span class="s2">using </span><span class="s1">std</span><span
+        class="s2">::</span><span class="s1">endl</span><span class="s4">;</span><span class="s1">
+<a name="l17"><span class="ln">17   </span></a> 
+<a name="l18"><span class="ln">18   </span></a>  asmbl</span><span class="s2">::</span><span
+        class="s1">Assembler a</span><span class="s4">;</span><span class="s1">
+<a name="l19"><span class="ln">19   </span></a> 
+<a name="l20"><span class="ln">20   </span></a>  a.setInputFile(</span><span class="s3">&quot;test.asm&quot;</span><span
+        class="s1">)</span><span class="s4">;</span><span class="s1">
+<a name="l21"><span class="ln">21   </span></a> 
+<a name="l22"><span class="ln">22   </span></a>  </span><span class="s0">// Record start time</span><span class="s1"> 
+<a name="l23"><span class="ln">23   </span></a>  </span><span class="s2">auto </span><span class="s1">start </span><span
+        class="s2">= </span><span class="s1">high_resolution_clock</span><span class="s2">::</span><span class="s1">now()</span><span
+        class="s4">;</span><span class="s1">
+<a name="l24"><span class="ln">24   </span></a> 
+<a name="l25"><span class="ln">25   </span></a>  </span><span class="s2">bool </span><span
+        class="s1">result </span><span class="s2">= </span><span class="s1">a.parseFile()</span><span
+        class="s4">;</span><span class="s1">
+<a name="l26"><span class="ln">26   </span></a> 
+<a name="l27"><span class="ln">27   </span></a>  </span><span class="s0">// Record end time</span><span class="s1"> 
+<a name="l28"><span class="ln">28   </span></a>  </span><span class="s2">auto </span><span
+        class="s1">finish </span><span class="s2">= </span><span class="s1">high_resolution_clock</span><span
+        class="s2">::</span><span class="s1">now()</span><span class="s4">;</span><span class="s1">
+<a name="l29"><span class="ln">29   </span></a> 
+<a name="l30"><span class="ln">30   </span></a>  std</span><span class="s2">::</span><span class="s1">chrono</span><span
+        class="s2">::</span><span class="s1">duration</span><span class="s2">&lt;double&gt; </span><span class="s1">elapsed </span><span
+        class="s2">= </span><span class="s1">finish </span><span class="s2">- </span><span class="s1">start</span><span
+        class="s4">;</span><span class="s1">
+<a name="l31"><span class="ln">31   </span></a> 
+<a name="l32"><span class="ln">32   </span></a>  cout </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;File parsed in: &quot; </span><span
+        class="s2">&lt;&lt; </span><span class="s1">elapsed.count() </span><span class="s2">&lt;&lt; </span><span
+        class="s1">(result </span><span class="s2">? </span><span class="s3">&quot; with success.&quot; </span><span
+        class="s2">: </span><span class="s3">&quot; and failed to assemble.&quot;</span><span class="s1">) </span><span
+        class="s2">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span><span class="s1">
+<a name="l33"><span class="ln">33   </span></a> 
+<a name="l34"><span class="ln">34   </span></a>  </span><span class="s2">if </span><span class="s1">(</span><span
+        class="s2">!</span><span class="s1">result)
+<a name="l35"><span class="ln">35   </span></a>    cout </span><span class="s2">&lt;&lt; </span><span class="s1">a.getErrors()</span><span
+        class="s4">;</span><span class="s1">
+<a name="l36"><span class="ln">36   </span></a>  </span><span class="s2">else </span><span class="s1">{ 
+<a name="l37"><span class="ln">37   </span></a>    start </span><span class="s2">= </span><span class="s1">high_resolution_clock</span><span
+        class="s2">::</span><span class="s1">now()</span><span class="s4">;</span><span class="s1">
+<a name="l38"><span class="ln">38   </span></a> 
+<a name="l39"><span class="ln">39   </span></a>    result </span><span class="s2">= </span><span class="s1">a.translate()</span><span
+        class="s4">;</span><span class="s1">
+<a name="l40"><span class="ln">40   </span></a> 
+<a name="l41"><span class="ln">41   </span></a>    finish </span><span class="s2">= </span><span class="s1">high_resolution_clock</span><span
+        class="s2">::</span><span class="s1">now()</span><span class="s4">;</span><span class="s1">
+<a name="l42"><span class="ln">42   </span></a> 
+<a name="l43"><span class="ln">43   </span></a>    elapsed </span><span class="s2">= </span><span
+        class="s1">finish </span><span class="s2">- </span><span class="s1">start</span><span class="s4">;</span><span
+        class="s1">
+<a name="l44"><span class="ln">44   </span></a>    cout </span><span class="s2">&lt;&lt; </span><span class="s3">&quot;Assembled in: &quot; </span><span
+        class="s2">&lt;&lt; </span><span class="s1">elapsed.count() </span><span class="s2">&lt;&lt; </span><span
+        class="s1">(result </span><span class="s2">? </span><span class="s3">&quot; assembled successfully&quot; </span><span
+        class="s2">: </span><span class="s3">&quot; build failed.&quot;</span><span class="s1">) </span><span
+        class="s2">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span><span class="s1">
+<a name="l45"><span class="ln">45   </span></a>  } 
+<a name="l46"><span class="ln">46   </span></a> 
+<a name="l47"><span class="ln">47   </span></a>  </span><span class="s0">// \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/</span><span
+        class="s1">
+<a name="l48"><span class="ln">48   </span></a>  </span><span class="s2">if </span><span class="s1">(result){ 
+<a name="l49"><span class="ln">49   </span></a>    disasmbl</span><span class="s2">::</span><span class="s1">Disassembler d(</span><span
+        class="s3">&quot;test.bin&quot;</span><span class="s1">)</span><span class="s4">;</span><span class="s1">
+<a name="l50"><span class="ln">50   </span></a> 
+<a name="l51"><span class="ln">51   </span></a>  </span><span class="s2">bool </span><span class="s1">res </span><span
+        class="s2">= </span><span class="s1">d.disassemble()</span><span class="s4">;</span><span class="s1">
+<a name="l52"><span class="ln">52   </span></a>  } 
+<a name="l53"><span class="ln">53   </span></a>  </span><span class="s0">// \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/</span><span
+        class="s1">
+<a name="l54"><span class="ln">54   </span></a> 
+<a name="l55"><span class="ln">55   </span></a> 
+<a name="l56"><span class="ln">56   </span></a> 
+<a name="l57"><span class="ln">57   </span></a>  </span><span class="s2">return </span><span class="s5">0</span><span
+        class="s4">;</span><span class="s1">
+<a name="l58"><span class="ln">58   </span></a>}</span></pre>
 </body>
 </html>

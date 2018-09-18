@@ -6,8 +6,8 @@
  * --------------------------------------------------------
  * \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
  *
- *  Created by Stavros Avramidis on 7/1/18
- *  Published under MIT License
+ *  Created by Stavros Avramidis on 9/10/18.
+ *
 */
 #ifndef ASSEMBLER_Disassembler_HPP
 #define ASSEMBLER_Disassembler_HPP

@@ -1,13 +1,13 @@
 /*  assembler.cpp
  *
- *  Created by Stavros Avramidis on 7/1/18.
+ *  Created by purpl3f0x on 7/1/18.
 */
 
 #include "assembler.hpp"
 
 namespace asmbl {
 
-Assembler::Assembler(bool mode = false) : onDebug{mode} {
+Assembler::Assembler(bool mode) : onDebug{mode} {
   rom.reserve(SIZE);
 
   //Registers

@@ -1,8 +1,11 @@
+/* test.asm */
+
 section .data
+// Nothing to see here
 
 section .text
 int e 4
-// Nothing to see here
+
 
 section .start
 RI

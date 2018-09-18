@@ -1,6 +1,8 @@
-//
-// Created by purpl3f0x on 9/16/18.
-//
+/*  assembler.cpp
+ *
+ *  Created by purpl3f0x on 9/16/18.
+ *  Stavros Avramidis
+*/
 
 #ifndef ASSEMBLER_RULES_HPP
 #define ASSEMBLER_RULES_HPP
@@ -84,5 +86,7 @@ auto const comment = x3::omit[
         | "/*" >> *(char_ - "*/") >> "*/"
 ];
 
-}
+} // end of rules namespace
+
+
 #endif //ASSEMBLER_RULES_HPP

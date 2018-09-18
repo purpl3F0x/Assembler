@@ -8,8 +8,8 @@
  * --------------------------------------------------------
  * \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
  *
- *  Created by Stavros Avramidis on 7/1/18
- *  Published under MIT License
+ *  Created by purpl3f0x on 7/1/18.
+ *  Stavros Avramidis
 */
 
 #ifndef ASSEMBLER_HPP
@@ -76,7 +76,7 @@ using ascii::space;
 class Assembler {
 
  public:
-  Assembler(bool mode);
+  Assembler(bool mode = false);
 
   short Register(std::string s);
 
@@ -156,6 +156,6 @@ class Assembler {
 
 };
 
-}
+} //end of assembler namespace
 
-#endif // end of definition ASSEMBLER_H
+#endif // ASSEMBLER_H
